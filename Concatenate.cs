@@ -12,17 +12,17 @@ namespace SanadDiP
     // Concatenation, returns 2 images either vertically or horizontally concatenated
     public class Concatenate 
     {
-        public static Bitmap Horizontal(Bitmap b1, Bitmap b2)
+        public static Bitmap Horizontal(Bitmap b1, Bitmap b2) // Horizontal concatenation means width = W1 + W2, height = Max(H1, H2)
         {
-            Bitmap bm1 = ImageAlteration.GrayScale(b1), bm2 = ImageAlteration.GrayScale(b2);
+            Bitmap bm1 = ImageAlteration.GrayScale(b1), bm2 = ImageAlteration.GrayScale(b2); // convert both grayscale if not already
             PixelFormat pF = PixelFormat.Format8bppIndexed;
             int w1 = b1.Width, h1 = b1.Height, w2 = b2.Width, h2 = b2.Height, bigW = w1 + w2, bigH = h1 >= h2 ? h1 : h2;
             
             BitmapData bmd1 = bm1.LockBits(new Rectangle(0, 0, w1, h1), ImageLockMode.ReadOnly, pF);
             BitmapData bmd2 = bm2.LockBits(new Rectangle(0, 0, w2, h2), ImageLockMode.ReadOnly, pF);
 
-            Bitmap concat = new Bitmap(bigW, bigH, pF);
-            concat.Palette = bm1.Palette;
+            Bitmap concat = new Bitmap(bigW, bigH, pF);     // create bitmap of new size.
+            concat.Palette = bm1.Palette;                   // alter new bitmap palette
             
             BitmapData bmdC = concat.LockBits(new Rectangle(0, 0, bigW, bigH), ImageLockMode.ReadWrite, pF);
 
@@ -36,34 +36,32 @@ namespace SanadDiP
 
             unsafe
             {
-                byte* ptr1 = (byte*)bmd1.Scan0.ToPointer(); // gets a pointer to the first pixel data in the bitmap1.
-                byte* ptr2 = (byte*)bmd2.Scan0.ToPointer();
-                byte* pixel = (byte*)bmdC.Scan0.ToPointer();    
-                // byte* POINTER = (byte*)bmdC.Scan0;
+                byte* ptr1 = (byte*)bmd1.Scan0.ToPointer();     // gets a pointer to the first pixel data in the first image.
+                byte* ptr2 = (byte*)bmd2.Scan0.ToPointer();     // gets a pointer to the first pixel data in the second image.
+                byte* pixel = (byte*)bmdC.Scan0.ToPointer();    // gets a pointer to the first pixel data in the concattenated image.
                 
-                for (int i = 0; i < bigH; i++)
+                for (int i = 0; i < bigH; i++) // looping through whole image height
                 {
-                    // byte* ROW = POINTER + (i * bigStride); USING OFFSET INSTEAD OF THIS
-                    for (int j = 0; j < w1; j++, pixel++) 
+
+                    for (int j = 0; j < w1; j++, pixel++)  // first image copying row values
                     {
                         if (i >= h1)
-                            pixel[0] = 255;
+                            pixel[0] = 255; // if image height is shorter than whole concattenated image height make it white pixel
                         else
                         {
-                            // PIXEL = (ROW + j);
-                            pixel[0] = ptr1[0];
+                            pixel[0] = ptr1[0]; // copy first image pixel
                             ptr1++;
                         }
 
                     }
 
-                    for (int j = 0; j < w2; j++, pixel++)
+                    for (int j = 0; j < w2; j++, pixel++) // second image copying row values
                     {
                         if (i >= h2)
-                            pixel[0] = 255;
+                            pixel[0] = 255; // if image height is shorter than whole concattenated image height make it white pixel
                         else
                         {
-                            pixel[0] = ptr2[0];
+                            pixel[0] = ptr2[0]; // copy second image pixel
                             ptr2++;
                         }
                     }
@@ -80,17 +78,17 @@ namespace SanadDiP
             return concat;
         }
 
-        public static Bitmap Vertical(Bitmap b1, Bitmap b2)
+        public static Bitmap Vertical(Bitmap b1, Bitmap b2) // Vertical concatenation means width = Max(W1, W2), height = H1 + H2
         {
-            Bitmap bm1 = ImageAlteration.GrayScale(b1), bm2 = ImageAlteration.GrayScale(b2);
+            Bitmap bm1 = ImageAlteration.GrayScale(b1), bm2 = ImageAlteration.GrayScale(b2); // convert both grayscale if not already
             PixelFormat pF = PixelFormat.Format8bppIndexed;
             int w1 = b1.Width, h1 = b1.Height, w2 = b2.Width, h2 = b2.Height, bigW = w1 >= w2 ? w1 : w2, bigH = h1 + h2;
             
             BitmapData bmd1 = bm1.LockBits(new Rectangle(0, 0, w1, h1), ImageLockMode.ReadOnly, pF);
             BitmapData bmd2 = bm2.LockBits(new Rectangle(0, 0, w2, h2), ImageLockMode.ReadOnly, pF);
 
-            Bitmap concat = new Bitmap(bigW, bigH, pF);
-            concat.Palette = bm1.Palette;
+            Bitmap concat = new Bitmap(bigW, bigH, pF); // create bitmap of new size.
+            concat.Palette = bm1.Palette;               // alter new bitmap palette
             
             BitmapData bmdC = concat.LockBits(new Rectangle(0, 0, bigW, bigH), ImageLockMode.ReadWrite, pF);
 
@@ -104,21 +102,19 @@ namespace SanadDiP
 
             unsafe
             {
-                byte* ptr1 = (byte*)bmd1.Scan0.ToPointer(); // gets a pointer to the first pixel data in the bitmap1.
-                byte* ptr2 = (byte*)bmd2.Scan0.ToPointer();
-                byte* pixel = (byte*)bmdC.Scan0.ToPointer();
+                byte* ptr1 = (byte*)bmd1.Scan0.ToPointer(); // gets a pointer to the first pixel data in the first image.
+                byte* ptr2 = (byte*)bmd2.Scan0.ToPointer(); // gets a pointer to the first pixel data in the second image.
+                byte* pixel = (byte*)bmdC.Scan0.ToPointer();// gets a pointer to the first pixel data in the concatenated image.
                 
-                for (int i = 0; i < h1; i++)
+                for (int i = 0; i < h1; i++)    // copy whole first image into concatenated image
                 {
-                    // byte* row1 = ptr1 + (i * stride1);
                     for (int j = 0; j < bigW; j++, pixel++)
                     {
                         if (j >= w1)
-                            pixel[0] = 255;
+                            pixel[0] = 255; // if image width is shorter than whole concattenated image width make it white pixel
                         else
                         {
-                            // pixel[0] = (row1 + j)[0];
-                            pixel[0] = ptr1[0];
+                            pixel[0] = ptr1[0]; // copy first image pixel
                             ptr1++;
                         }
                     }
@@ -128,15 +124,13 @@ namespace SanadDiP
 
                 for (int i = 0; i < h2; i++)
                 {
-                    // byte* row2 = ptr2 + (i * stride2);
                     for (int j = 0; j < bigW; j++, pixel++)
                     {
                         if (j >= w2)
-                            pixel[0] = 255;
+                            pixel[0] = 255; // if image width is shorter than whole concattenated image width make it white pixel
                         else
                         {
-                            // pixel[0] = (row2 + j)[0];
-                            pixel[0] = ptr2[0];
+                            pixel[0] = ptr2[0]; // copy second image pixel
                             ptr2++;
                         }
                     }

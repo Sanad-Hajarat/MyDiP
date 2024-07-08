@@ -12,9 +12,9 @@ namespace SanadDiP
     {
         public static Bitmap ApplyStaticThreshold(Bitmap b, int t) { return ApplyThreshold(b, t); }
         public static Bitmap ApplyMeanThreshold(Bitmap b) { return ApplyThreshold(b, GetMean(b)); }
-        private static Bitmap ApplyThreshold(Bitmap b, int t) // Look for repeated values and try to change in it.
+        private static Bitmap ApplyThreshold(Bitmap b, int t)   // Look for repeated values and try to change in it.
         {
-            t = (byte)((t < 0) ? 0 : (t > 255) ? 255 : t);
+            t = (byte)((t < 0) ? 0 : (t > 255) ? 255 : t);      // Pixel Value is manipulated
             
             int bW = b.Width, bH = b.Height;
             Bitmap copy = (Bitmap)ImageAlteration.GrayScale(b).Clone(); // Use clone with grayscale because it is changing original image
@@ -31,7 +31,7 @@ namespace SanadDiP
                for (int y = 0; y < bH; y++)
                {
                    for (int x = 0; x < bW; x++, pixel++)
-                        pixel[0] = (byte)(pixel[0] > t ? 255 : 0);
+                        pixel[0] = (byte)(pixel[0] > t ? 255 : 0); // changes pixel value according to if greated or less than threshold.
                    pixel += offSet;
                }
             }
@@ -39,12 +39,14 @@ namespace SanadDiP
             
             return copy;
         }
-        private static int GetMean(Bitmap b)
+        private static int GetMean(Bitmap b) // returns mean pixel value in gray image
         {
             int sum = 0;
             
             int bW = b.Width, bH = b.Height;
-            BitmapData bmd1 = b.LockBits(new Rectangle(0, 0, bW, bH), ImageLockMode.ReadOnly, PixelFormat.Format8bppIndexed);
+            Bitmap copy = (Bitmap)ImageAlteration.GrayScale(b).Clone(); // Use clone with grayscale because it is changing original image
+            /////// ^^^^^^^^^^^^^^^^ Grayscale conversion in both GetMean and ApplyThreshold, make it once.
+            BitmapData bmd1 = copy.LockBits(new Rectangle(0, 0, bW, bH), ImageLockMode.ReadOnly, PixelFormat.Format8bppIndexed);
 
             int stride = bmd1.Stride;
             int offSet = stride - bW;
@@ -57,13 +59,13 @@ namespace SanadDiP
                 for (int y = 0; y < bH; y++)
                 {
                     for (int x = 0; x < bW; x++, pixel++) 
-                        sum += pixel[0];
+                        sum += pixel[0]; // sums up pixel values
                     pixel += offSet;
                 }
             }
-            b.UnlockBits(bmd1);
+            copy.UnlockBits(bmd1);
             
-            return sum/(bW*bH);
+            return sum/(bW*bH); // returns mean
         }
         
         
@@ -80,7 +82,7 @@ namespace SanadDiP
         
         
 
-        public static Bitmap AdaptiveThresholding4(Bitmap b, bool isOtsu)
+        public static Bitmap AdaptiveThresholding4(Bitmap b, bool isMean)
         {
             int bW = b.Width, bH = b.Height, bH4 = bH/4, bH2 = bH/2;
             PixelFormat pF = PixelFormat.Format8bppIndexed;
@@ -128,7 +130,7 @@ namespace SanadDiP
             return newB;
         }
         
-        public static Bitmap AdaptiveThresholding8(Bitmap b, bool isOtsu)
+        public static Bitmap AdaptiveThresholding8(Bitmap b, bool isMean)
         {
             int bW = b.Width, bH = b.Height, bH8 = bH/8, bH4 = bH/4, bH2 = bH/2;
             PixelFormat pF = PixelFormat.Format8bppIndexed;
