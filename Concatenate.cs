@@ -15,7 +15,7 @@ namespace SanadDiP
         public static Bitmap Horizontal(Bitmap b1, Bitmap b2) // Horizontal concatenation means width = W1 + W2, height = Max(H1, H2)
         {
             Bitmap bm1 = ImageAlteration.GrayScale(b1), bm2 = ImageAlteration.GrayScale(b2); // convert both grayscale if not already
-            PixelFormat pF = PixelFormat.Format8bppIndexed;
+            PixelFormat pF = PixelFormat.Format8bppIndexed; //////// const
             int w1 = b1.Width, h1 = b1.Height, w2 = b2.Width, h2 = b2.Height, bigW = w1 + w2, bigH = h1 >= h2 ? h1 : h2;
             
             BitmapData bmd1 = bm1.LockBits(new Rectangle(0, 0, w1, h1), ImageLockMode.ReadOnly, pF);

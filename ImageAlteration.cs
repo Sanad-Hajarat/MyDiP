@@ -79,31 +79,30 @@ namespace SanadDiP
             return newB;
         }
 
-        public static Bitmap AddBorder(Bitmap b, byte color)    // Adds border of certain color. Helps with dilation and erosion.
+        public static Bitmap AddBorder(Bitmap b, byte color, int borderWidth)    // Adds border of certain color. Helps with dilation and erosion.
         {
-            int bW = b.Width, bH = b.Height, bW2 = bW + 2, bH2 = bH + 2; // define new width and height for bordered image.
-            PixelFormat pF = PixelFormat.Format8bppIndexed;
+            int bW = b.Width, bH = b.Height, bW2 = bW + (borderWidth*2), bH2 = bH + (borderWidth*2); // define new width and height for bordered image.
             Bitmap greyB = (Bitmap)ImageAlteration.GrayScale(b).Clone();                 // grayscale transformation to make it easier to deal with.
-            Bitmap newB = new Bitmap(bW2, bH2, pF);
-            BitmapData b1 = greyB.LockBits(new Rectangle(0, 0, bW, bH), ImageLockMode.ReadOnly, pF);     
-            BitmapData b2 = newB.LockBits(new Rectangle(0, 0, bW2, bH2), ImageLockMode.ReadWrite, pF);  
+            Bitmap newB = new Bitmap(bW2, bH2, PixelFormat.Format8bppIndexed);
+            BitmapData b1 = greyB.LockBits(new Rectangle(0, 0, bW, bH),
+                ImageLockMode.ReadOnly, PixelFormat.Format8bppIndexed);     
+            BitmapData b2 = newB.LockBits(new Rectangle(0, 0, bW2, bH2),
+                ImageLockMode.ReadWrite, PixelFormat.Format8bppIndexed);  
             
             unsafe
             {
                 byte* pixel1 = (byte*)b1.Scan0.ToPointer(); // gets a pointer to the first pixel data in the normal image.
                 byte* pixel2 = (byte*)b2.Scan0.ToPointer(); // gets a pointer to the first pixel data in the bordered image.
 
-                int stride1 = b1.Stride;
-                int stride2 = b2.Stride;
-
-                int offSet1 = stride1 - bW, offSet2 = stride2 - bW2;
+                int offSet1 = b1.Stride - bW, offSet2 = b2.Stride - bW2;
                 
                 for (int y = 0; y < bH2; y++)
                 {
                     for (int x = 0; x < bW2; x++, pixel2++)
                     {
-                        if (x < 1 || y < 1 || x > bW || y > bH) { pixel2[0] = color; }  // if on border make pixel = color
-                        else { pixel2[0] = pixel1[0]; pixel1++; }                       // else              pixel = normal pixel
+                        if (x < borderWidth || y < borderWidth || x > bW + (borderWidth-1) || y > bH + (borderWidth-1)) 
+                            { pixel2[0] = color; }                                      // if on border make pixel = color
+                        else { pixel2[0] = pixel1[0]; pixel1++; }                       // else pixel = normal pixel
                     }
                     pixel2 += offSet2;
                     if (y == 0)
@@ -185,30 +184,36 @@ namespace SanadDiP
             Bitmap copy = (Bitmap)ImageAlteration.GrayScale(b).Clone(); // Use clone with grayscale because it is changing original image
             PixelFormat pF = b.PixelFormat;
             Bitmap newB = new Bitmap(newW, newH, pF);
-            BitmapData bmd = copy.LockBits(new Rectangle(0, 0, bW, bH), ImageLockMode.ReadOnly, pF);
-            BitmapData bmd1 = newB.LockBits(new Rectangle(0, 0, newW, newH), ImageLockMode.ReadWrite, pF);
-            
-            int stride1 = bmd.Stride, stride2 = bmd1.Stride;
+            BitmapData bmd1 = copy.LockBits(new Rectangle(0, 0, bW, bH), ImageLockMode.ReadOnly, pF);
+            BitmapData bmd2 = newB.LockBits(new Rectangle(0, 0, newW, newH), ImageLockMode.ReadWrite, pF);
+
+            int stride1 = bmd1.Stride, stride2 = bmd2.Stride;
             int offSet = stride2 - newW;
 
             unsafe
             {
-                byte* ptr = (byte*)bmd.Scan0.ToPointer();  
-                byte* pixel = (byte*)bmd1.Scan0.ToPointer();  
+                byte* ptr = (byte*)bmd1.Scan0.ToPointer();  
+                byte* pixel = (byte*)bmd2.Scan0.ToPointer();  
 
-                for (int y = 0; y < newY; y++) 
+                for (int y = 0; y < newH; y++) 
                 {
-                    byte* rowPtr = ptr + (y*stride1);
-                    for (int x = 0; x < newW; x++)
+                    int pixelY = (int)(y / factor);
+                    if (pixelY >= bH) { pixelY = bH - 1; }
+                    byte* rowPtr = ptr + (pixelY*stride1);
+
+                    for (int x = 0; x < newW; x++, pixel++)
                     {
-                        pixel[0] = (rowPtr + (int)Math.Floor(x*factor))[0];
+                        int pixelX = (int)(x / factor);
+                        // Console.WriteLine($"(x, y): ({x}, {y}), (pixelX, pixelY): ({pixelX}, {pixelY})");
+                        if (pixelX >= bW) { pixelX = bW - 1; }
+                        pixel[0] = *(rowPtr + pixelX);
                     }
                     pixel += offSet;
                 }
             }
             
-            copy.UnlockBits(bmd);
-            newB.UnlockBits(bmd1);
+            copy.UnlockBits(bmd1);
+            newB.UnlockBits(bmd2);
             
             
             // All of the above has the same runtime, even more than last
