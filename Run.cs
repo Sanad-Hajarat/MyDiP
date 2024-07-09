@@ -46,18 +46,18 @@ namespace SanadDiP
 
             // Task 2: Concatenate two gray scale images horizontally and vertically.
 
-            bmp = new Bitmap(address + "/8BitImages/HS8bit.bmp");
+            bmp = new Bitmap(address + "/8BitImages/lena_gray.bmp");
             Bitmap bmp2 = new Bitmap(address + "/8BitImages/CHEQUE8bit.bmp");
             sw.Restart();
-            Bitmap vertical = Concatenate.Vertical(bmp, bmp2);
+            Bitmap vertical = Concatenate.Concat(bmp, bmp2, false);
             sw.Stop();
             Console.WriteLine($"Time taken for two {bmp.PixelFormat} images of sizes ({bmp.Width}, {bmp.Height}) & ({bmp2.Width}, {bmp2.Height}) for Vertical Concatenation: {sw.ElapsedMilliseconds}ms");
             sw.Restart();
-            Bitmap horizontal = Concatenate.Horizontal(bmp, bmp2);
+            Bitmap horizontal = Concatenate.Concat(bmp, bmp2, true);
             sw.Stop();
             Console.WriteLine($"Time taken for two {bmp2.PixelFormat} images of sizes ({bmp.Width}, {bmp.Height}) & ({bmp2.Width}, {bmp2.Height}) for Horizontal Concatenation: {sw.ElapsedMilliseconds}ms");
-            vertical.Save("Images/ConcatVertical.jpg", ImageFormat.Jpeg);
-            horizontal.Save("Images/ConcatHorizontal.jpg", ImageFormat.Jpeg);
+            vertical.Save("Images/ConcatVerticalLenaCheque.jpg", ImageFormat.Jpeg);
+            horizontal.Save("Images/ConcatHorizontalLenaCheque.jpg", ImageFormat.Jpeg);
             Console.WriteLine();
 
             // Tasks 3 & 4: Convert 24 bits color & 1-bit binary images to 8-bit grayscale image. 

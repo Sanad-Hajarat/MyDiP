@@ -11,13 +11,17 @@ namespace SanadDiP
     public class Binarization //We use static across class because the class is independent of an object, containing only methods
     {
         public static Bitmap ApplyStaticThreshold(Bitmap b, int t) { return ApplyThreshold(b, t); }
-        public static Bitmap ApplyMeanThreshold(Bitmap b) { return ApplyThreshold(b, GetMean(b)); }
-        private static Bitmap ApplyThreshold(Bitmap b, int t)   // Look for repeated values and try to change in it.
+        public static Bitmap ApplyMeanThreshold(Bitmap b) 
+        { 
+            Bitmap image = ImageAlteration.GrayScale(b);
+            return ApplyThreshold(image, GetMean(image)); 
+        }
+        private static Bitmap ApplyThreshold(Bitmap b, int t)
         {
-            t = (byte)((t < 0) ? 0 : (t > 255) ? 255 : t);      // Pixel Value is manipulated
+            t = (byte)((t < 0) ? 0 : (t > 255) ? 255 : t);              // Pixel Value is manipulated
             
             int bW = b.Width, bH = b.Height;
-            Bitmap copy = (Bitmap)ImageAlteration.GrayScale(b).Clone(); // Use clone with grayscale because it is changing original image
+            Bitmap copy = ImageAlteration.GrayScale(b); // Use clone with grayscale because it is changing original image
             BitmapData bmd1 = copy.LockBits(new Rectangle(0, 0, bW, bH), ImageLockMode.ReadWrite, PixelFormat.Format8bppIndexed);
 
             int stride = bmd1.Stride;
@@ -45,11 +49,9 @@ namespace SanadDiP
             
             int bW = b.Width, bH = b.Height;
             Bitmap copy = (Bitmap)ImageAlteration.GrayScale(b).Clone(); // Use clone with grayscale because it is changing original image
-            /////// ^^^^^^^^^^^^^^^^ Grayscale conversion in both GetMean and ApplyThreshold, make it once.
             BitmapData bmd1 = copy.LockBits(new Rectangle(0, 0, bW, bH), ImageLockMode.ReadOnly, PixelFormat.Format8bppIndexed);
 
-            int stride = bmd1.Stride;
-            int offSet = stride - bW;
+            int offSet = bmd1.Stride - bW;
 
             unsafe
             { 
@@ -63,6 +65,7 @@ namespace SanadDiP
                     pixel += offSet;
                 }
             }
+
             copy.UnlockBits(bmd1);
             
             return sum/(bW*bH); // returns mean
