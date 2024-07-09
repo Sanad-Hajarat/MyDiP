@@ -181,8 +181,38 @@ namespace SanadDiP
         {
             if (factor == 1)
                 return b;
-            int newW = (int)(b.Width * factor), newH = (int)(b.Height * factor);    // using factor to change bW and bH.
-            Bitmap newB = new Bitmap(b, new Size(newW, newH));                      // using built in constructor to rescale image.
+            int bW = b.Width, bH = b.Height, newW = (int)(bW * factor), newH = (int)(bH * factor);  // using factor to change bW and bH.
+            Bitmap copy = (Bitmap)ImageAlteration.GrayScale(b).Clone(); // Use clone with grayscale because it is changing original image
+            PixelFormat pF = b.PixelFormat;
+            Bitmap newB = new Bitmap(newW, newH, pF);
+            BitmapData bmd = copy.LockBits(new Rectangle(0, 0, bW, bH), ImageLockMode.ReadOnly, pF);
+            BitmapData bmd1 = newB.LockBits(new Rectangle(0, 0, newW, newH), ImageLockMode.ReadWrite, pF);
+            
+            int stride1 = bmd.Stride, stride2 = bmd1.Stride;
+            int offSet = stride2 - newW;
+
+            unsafe
+            {
+                byte* ptr = (byte*)bmd.Scan0.ToPointer();  
+                byte* pixel = (byte*)bmd1.Scan0.ToPointer();  
+
+                for (int y = 0; y < newY; y++) 
+                {
+                    byte* rowPtr = ptr + (y*stride1);
+                    for (int x = 0; x < newW; x++)
+                    {
+                        pixel[0] = (rowPtr + (int)Math.Floor(x*factor))[0];
+                    }
+                    pixel += offSet;
+                }
+            }
+            
+            copy.UnlockBits(bmd);
+            newB.UnlockBits(bmd1);
+            
+            
+            // All of the above has the same runtime, even more than last
+            //
             return newB;
         }
     } 

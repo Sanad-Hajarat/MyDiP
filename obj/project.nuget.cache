@@ -1,6 +1,6 @@
 {
   "version": 2,
-  "dgSpecHash": "AJrL4oHJFovCOlBcCsfN2ZZKSUe6m/4tIQHQ5nYf95DyBFXHgH4rwJ3ceERkELKZ3Sr01HPrJN/JRcunnFNZyg==",
+  "dgSpecHash": "2bW5vJ2ixB07zVSPW+nQ+lgwjhYaPXCxGQOGZhw1Vp+3OpUSg4GrJk8D3S/A+DxEIb4PDe4S1FGlFiQsK4Wgyw==",
   "success": true,
   "projectFilePath": "/home/sanad/DIPME/MyDiP/MyDiP.csproj",
   "expectedPackageFiles": [
@@ -60,7 +60,10 @@
     "/home/sanad/.nuget/packages/system.text.encoding.codepages/6.0.0/system.text.encoding.codepages.6.0.0.nupkg.sha512",
     "/home/sanad/.nuget/packages/system.threading.accesscontrol/6.0.0/system.threading.accesscontrol.6.0.0.nupkg.sha512",
     "/home/sanad/.nuget/packages/system.web.services.description/4.9.0/system.web.services.description.4.9.0.nupkg.sha512",
-    "/home/sanad/.nuget/packages/system.windows.extensions/6.0.0/system.windows.extensions.6.0.0.nupkg.sha512"
+    "/home/sanad/.nuget/packages/system.windows.extensions/6.0.0/system.windows.extensions.6.0.0.nupkg.sha512",
+    "/home/sanad/.nuget/packages/microsoft.netcore.app.runtime.win-x64/6.0.30/microsoft.netcore.app.runtime.win-x64.6.0.30.nupkg.sha512",
+    "/home/sanad/.nuget/packages/microsoft.aspnetcore.app.runtime.win-x64/6.0.30/microsoft.aspnetcore.app.runtime.win-x64.6.0.30.nupkg.sha512",
+    "/home/sanad/.nuget/packages/microsoft.netcore.app.host.win-x64/6.0.30/microsoft.netcore.app.host.win-x64.6.0.30.nupkg.sha512"
   ],
   "logs": []
 }
