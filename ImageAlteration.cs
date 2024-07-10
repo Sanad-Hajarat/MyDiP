@@ -48,9 +48,9 @@ namespace SanadDiP
                     {
                         for (int x = 0; x < bW; x++, grayPixel++)    // increment x for trace and ptr2 to get to next pixel.
                         {
-                            // byte pixelByte = *(coloredPixel + (x / 8));// finds byte responsible for pixel value e.x. (1000 0101)
-                            int pixelValue = (*(coloredPixel + (x / 8)) >> (7 - (x % 8))) & 0x01;   // results in 0 or 1 only which is pixel value from bit.
-                            *grayPixel = (byte)(pixelValue > 0 ? 255 : 0);            // sets new gray image value to 255 or 0.
+                            byte pixelByte = *(coloredPixel + (x / 8));// finds byte responsible for pixel value e.x. (1000 0101)
+                            int pixelValue = (pixelByte >> (7 - (x % 8))) & 0x01;   // results in 0 or 1 only which is pixel value from bit.
+                            *grayPixel |= (byte)(pixelValue > 0 ? 255 : 0);            // sets new gray image value to 255 or 0.
                         }
                     }
                 }
@@ -168,7 +168,7 @@ namespace SanadDiP
             return b.Clone(new Rectangle(skip, skip, bW, bH), b.PixelFormat);   // skip is used to trace where the white boundaries are repeating.
         } // Returns same Image cropped by exactly n rows and columns equally
 
-        public static Bitmap Rescale(Bitmap b, double factor) // Changes image resolution by resizing/rescaling to a factor
+        public static Bitmap Rescale(Bitmap b, double factor) // Changes image resolution by resizing/rescaling
         {
             if (factor == 1)
                 return (Bitmap)b.Clone();
