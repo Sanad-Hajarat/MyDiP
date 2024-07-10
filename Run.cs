@@ -62,12 +62,13 @@ namespace SanadDiP
 
             // Tasks 3 & 4: Convert 24 bits color & 1-bit binary images to 8-bit grayscale image. 
             
-            bmp = new Bitmap(address + "/1BitImages/bwImage.bmp");
+            bmp = new Bitmap(address + "/1BitImages/2ChequesBW.bmp");
             bmp2 = new Bitmap(address + "/24BitImages/Headshot.jpg");
             sw.Restart();
             Bitmap binaryToGray = ImageAlteration.GrayScale(bmp);
             sw.Stop();
             Console.WriteLine($"Time taken for a binary (1-bit image) of size ({bmp.Width}, {bmp.Height}) to grayscale transformation: {sw.ElapsedMilliseconds}ms");
+            binaryToGray.Save("Images/BITtoGRAYcheques.jpg", ImageFormat.Jpeg);
             sw.Restart();
             Bitmap rgbToGray = ImageAlteration.GrayScale(bmp2);
             sw.Stop();

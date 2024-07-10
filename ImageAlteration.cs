@@ -50,7 +50,7 @@ namespace SanadDiP
                         {
                             // byte pixelByte = *(coloredPixel + (x / 8));// finds byte responsible for pixel value e.x. (1000 0101)
                             int pixelValue = (*(coloredPixel + (x / 8)) >> (7 - (x % 8))) & 0x01;   // results in 0 or 1 only which is pixel value from bit.
-                            *grayPixel |= (byte)(pixelValue > 0 ? 255 : 0);            // sets new gray image value to 255 or 0.
+                            *grayPixel = (byte)(pixelValue > 0 ? 255 : 0);            // sets new gray image value to 255 or 0.
                         }
                     }
                 }
