@@ -107,12 +107,12 @@ namespace SanadDiP
             bmp.Save("Images/HuskyNormal.jpg", ImageFormat.Jpeg);
 
             sw.Restart();
-            bmp2 = ImageAlteration.Rescale(bmp, 0.5);
+            bmp2 = ImageAlteration.Rescale(bmp, 0.25);
             sw.Stop();
             Console.WriteLine($"Image Before size = ({bmp.Width}, {bmp.Height}), Image After size = ({bmp2.Width}, {bmp2.Height})");
             Console.WriteLine($"Time taken: {sw.ElapsedMilliseconds}ms");
             Console.WriteLine();
-            bmp2.Save("Images/HuskyRescaledHalf.jpg", ImageFormat.Jpeg);
+            bmp2.Save("Images/HuskyRescaledQuarter.jpg", ImageFormat.Jpeg);
 
             sw.Restart();
             bmp2 = ImageAlteration.Rescale(bmp, 2);

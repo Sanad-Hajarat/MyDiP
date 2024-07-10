@@ -48,8 +48,8 @@ namespace SanadDiP
                     {
                         for (int x = 0; x < bW; x++, grayPixel++)    // increment x for trace and ptr2 to get to next pixel.
                         {
-                            byte pixelByte = *(coloredPixel + (x / 8));// finds byte responsible for pixel value e.x. (1000 0101)
-                            int pixelValue = (pixelByte >> (7 - (x % 8))) & 0x01;   // results in 0 or 1 only which is pixel value from bit.
+                            // byte pixelByte = *(coloredPixel + (x / 8));// finds byte responsible for pixel value e.x. (1000 0101)
+                            int pixelValue = (*(coloredPixel + (x / 8)) >> (7 - (x % 8))) & 0x01;   // results in 0 or 1 only which is pixel value from bit.
                             *grayPixel |= (byte)(pixelValue > 0 ? 255 : 0);            // sets new gray image value to 255 or 0.
                         }
                     }
@@ -168,29 +168,31 @@ namespace SanadDiP
             return b.Clone(new Rectangle(skip, skip, bW, bH), b.PixelFormat);   // skip is used to trace where the white boundaries are repeating.
         } // Returns same Image cropped by exactly n rows and columns equally
 
-        public static Bitmap Rescale(Bitmap b, double factor) // Changes image resolution by resizing/rescaling
+        public static Bitmap Rescale(Bitmap b, double factor) // Changes image resolution by resizing/rescaling to a factor
         {
             if (factor == 1)
                 return (Bitmap)b.Clone();
-            int bW = b.Width, bH = b.Height, rescaledW = (int)(bW * factor), rescaledH = (int)(bH * factor);  // using factor to change bW and bH.
-            Bitmap copy = GrayScale(b);                               // Use clone with grayscale because it is changing original image.
+            int originalWidth = b.Width, originalHeight = b.Height;
+            int rescaledW = (int)(originalWidth * factor);
+            int rescaledH = (int)(originalHeight * factor);  // using factor to change bW and bH.
+            Bitmap copy = GrayScale(b);
             Bitmap newB = new Bitmap(rescaledW, rescaledH, PixelFormat.Format8bppIndexed);
             newB.Palette = copy.Palette;
-            BitmapData original = copy.LockBits(new Rectangle(0, 0, bW, bH), ImageLockMode.ReadOnly, PixelFormat.Format8bppIndexed);
+            BitmapData original = copy.LockBits(new Rectangle(0, 0, originalWidth, originalHeight), ImageLockMode.ReadOnly, PixelFormat.Format8bppIndexed);
             BitmapData rescaled = newB.LockBits(new Rectangle(0, 0, rescaledW, rescaledH), ImageLockMode.ReadWrite, PixelFormat.Format8bppIndexed);
 
-            int stride = original.Stride;
-            int offSet = rescaled.Stride - rescaledW;
+            int strideOriginal = original.Stride;
+            int offSetRescaled = rescaled.Stride - rescaledW;
 
             unsafe
             {
                 byte* originalPixel = (byte*)original.Scan0.ToPointer();  
                 byte* rescaledPixel = (byte*)rescaled.Scan0.ToPointer();  
 
-                for (int y = 0; y < rescaledH; y++, rescaledPixel += offSet) 
+                for (int y = 0; y < rescaledH; y++, rescaledPixel += offSetRescaled) 
                 {
                     int pixelY = (int) (y/factor);
-                    byte* rowPtr = originalPixel + (pixelY * stride);
+                    byte* rowPtr = originalPixel + (pixelY * strideOriginal);
 
                     for (int x = 0; x < rescaledW; x++, rescaledPixel++)
                     {
