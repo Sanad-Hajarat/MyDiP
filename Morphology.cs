@@ -10,7 +10,7 @@ namespace SanadDiP
     /// ProgressSoft Corporation
     /// </CREDITS>
     public class Morphology
-    {
+    {   // strel has to be odd square (3x3), (5x5), or (7x7) etc. for this function to work
         private static int[,] sqr = new int[,] { { 1, 1, 1 }, { 1, 1, 1 }, { 1, 1, 1 } };   // base structuring element
 
         public static Bitmap Erode(Bitmap b) { return Erode(b, sqr); }
@@ -45,7 +45,7 @@ namespace SanadDiP
                         *pixel = 0;
                         for (int i = 0; i < filterSize; i++)
                         {
-                            for (int j = 0; j < filterSize; j++)
+                            for (int j = 0; j < filterSize; j++)    
                             {
                                 if (strel[i, j] > 0.5 && *(borderedImage + (stride1*i) + j) > 128)
                                 {
@@ -53,7 +53,7 @@ namespace SanadDiP
                                     break;
                                 }
                             }
-                            if (*pixel == 255) { break; }
+                            if (*pixel > 128) { break; }
                         }
                     }
                 }
@@ -102,7 +102,7 @@ namespace SanadDiP
                                     break;
                                 }
                             }
-                            if (*pixel == 0) { break; }
+                            if (*pixel < 128) { break; }
                         }
                     }
                 }

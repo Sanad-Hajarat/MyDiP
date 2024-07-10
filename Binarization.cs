@@ -21,7 +21,7 @@ namespace SanadDiP
             t = (byte)((t < 0) ? 0 : (t > 255) ? 255 : t);              // Pixel Value is manipulated
             
             int bW = b.Width, bH = b.Height;
-            Bitmap copy = ImageAlteration.GrayScale(b); // Use clone with grayscale because it is changing original image
+            Bitmap copy = ImageAlteration.GrayScale(b);
             BitmapData bmd1 = copy.LockBits(new Rectangle(0, 0, bW, bH), ImageLockMode.ReadWrite, PixelFormat.Format8bppIndexed);
 
             int stride = bmd1.Stride;
@@ -48,8 +48,7 @@ namespace SanadDiP
             int sum = 0;
             
             int bW = b.Width, bH = b.Height;
-            Bitmap copy = (Bitmap)ImageAlteration.GrayScale(b).Clone(); // Use clone with grayscale because it is changing original image
-            BitmapData bmd1 = copy.LockBits(new Rectangle(0, 0, bW, bH), ImageLockMode.ReadOnly, PixelFormat.Format8bppIndexed);
+            BitmapData bmd1 = b.LockBits(new Rectangle(0, 0, bW, bH), ImageLockMode.ReadOnly, PixelFormat.Format8bppIndexed);
 
             int offSet = bmd1.Stride - bW;
 
@@ -66,7 +65,7 @@ namespace SanadDiP
                 }
             }
 
-            copy.UnlockBits(bmd1);
+            b.UnlockBits(bmd1);
             
             return sum/(bW*bH); // returns mean
         }
