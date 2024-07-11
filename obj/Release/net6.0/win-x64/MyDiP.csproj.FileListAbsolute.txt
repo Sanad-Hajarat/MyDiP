@@ -287,7 +287,6 @@
 /home/sanad/DIPME/MyDiP/bin/Release/net6.0/win-x64/hostfxr.dll
 /home/sanad/DIPME/MyDiP/bin/Release/net6.0/win-x64/hostpolicy.dll
 /home/sanad/DIPME/MyDiP/bin/Release/net6.0/win-x64/mscordaccore.dll
-/home/sanad/DIPME/MyDiP/bin/Release/net6.0/win-x64/mscordaccore_amd64_amd64_6.0.3024.21525.dll
 /home/sanad/DIPME/MyDiP/bin/Release/net6.0/win-x64/mscordbi.dll
 /home/sanad/DIPME/MyDiP/bin/Release/net6.0/win-x64/mscorrc.dll
 /home/sanad/DIPME/MyDiP/bin/Release/net6.0/win-x64/msquic.dll
@@ -303,3 +302,4 @@
 /home/sanad/DIPME/MyDiP/obj/Release/net6.0/win-x64/MyDiP.pdb
 /home/sanad/DIPME/MyDiP/obj/Release/net6.0/win-x64/MyDiP.genruntimeconfig.cache
 /home/sanad/DIPME/MyDiP/obj/Release/net6.0/win-x64/ref/MyDiP.dll
+/home/sanad/DIPME/MyDiP/bin/Release/net6.0/win-x64/mscordaccore_amd64_amd64_6.0.3224.31407.dll

@@ -220,7 +220,7 @@
 /home/sanad/DIPME/MyDiP/bin/Release/net6.0/win-x64/publish/hostfxr.dll
 /home/sanad/DIPME/MyDiP/bin/Release/net6.0/win-x64/publish/hostpolicy.dll
 /home/sanad/DIPME/MyDiP/bin/Release/net6.0/win-x64/publish/mscordaccore.dll
-/home/sanad/DIPME/MyDiP/bin/Release/net6.0/win-x64/publish/mscordaccore_amd64_amd64_6.0.3024.21525.dll
+/home/sanad/DIPME/MyDiP/bin/Release/net6.0/win-x64/publish/mscordaccore_amd64_amd64_6.0.3224.31407.dll
 /home/sanad/DIPME/MyDiP/bin/Release/net6.0/win-x64/publish/mscordbi.dll
 /home/sanad/DIPME/MyDiP/bin/Release/net6.0/win-x64/publish/mscorrc.dll
 /home/sanad/DIPME/MyDiP/bin/Release/net6.0/win-x64/publish/msquic.dll

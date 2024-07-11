@@ -12,7 +12,6 @@ namespace SanadDiP
     /// </CREDITS>
 
     /////// look at width & stride call cost
-    /////// look at color calculation why so
     /////// why static everything get to the core of it
     public class Run
     {
