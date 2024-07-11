@@ -93,26 +93,26 @@ namespace SanadDiP
 
             // Task 6: Remove white boundaries from an image.
 
-            bmp = new Bitmap("/home/sanad/Desktop/My Files/24BitImages/Husky.jpg");
-            sw.Restart();
-            bmp2 = ImageAlteration.RemoveWhiteBounds(bmp);
-            sw.Stop();
-            Console.WriteLine($"Image Before size = ({bmp.Width}, {bmp.Height}), Image After size = ({bmp2.Width}, {bmp2.Height})");
-            Console.WriteLine($"Time taken: {sw.ElapsedMilliseconds}ms");
-            bmp2.Save("Images/HuskyNoWhiteBounds.jpg", ImageFormat.Jpeg);
-            Console.WriteLine();
+            bmp = new Bitmap("/home/sanad/Desktop/My Files/24BitImages/MrInc.jpg");
+            // sw.Restart();
+            // bmp2 = ImageAlteration.RemoveWhiteBounds(bmp);
+            // sw.Stop();
+            // Console.WriteLine($"Image Before size = ({bmp.Width}, {bmp.Height}), Image After size = ({bmp2.Width}, {bmp2.Height})");
+            // Console.WriteLine($"Time taken: {sw.ElapsedMilliseconds}ms");
+            // bmp2.Save("Images/HuskyNoWhiteBounds.jpg", ImageFormat.Jpeg);
+            // Console.WriteLine();
 
             // Task 7: Rescale image to best fit (either horizontally or vertically)
             
-            bmp.Save("Images/HuskyNormal.jpg", ImageFormat.Jpeg);
+            // bmp.Save("Images/HuskyNormal.jpg", ImageFormat.Jpeg);
 
             sw.Restart();
-            bmp2 = ImageAlteration.Rescale(bmp, 0.25);
+            bmp2 = ImageAlteration.Rescale(bmp, 0.5);
             sw.Stop();
             Console.WriteLine($"Image Before size = ({bmp.Width}, {bmp.Height}), Image After size = ({bmp2.Width}, {bmp2.Height})");
             Console.WriteLine($"Time taken: {sw.ElapsedMilliseconds}ms");
             Console.WriteLine();
-            bmp2.Save("Images/HuskyRescaledQuarter.jpg", ImageFormat.Jpeg);
+            bmp2.Save("Images/MrIncRescaledHalfColored.jpg", ImageFormat.Jpeg);
 
             sw.Restart();
             bmp2 = ImageAlteration.Rescale(bmp, 2);
@@ -120,7 +120,7 @@ namespace SanadDiP
             Console.WriteLine($"Image Before size = ({bmp.Width}, {bmp.Height}), Image After size = ({bmp2.Width}, {bmp2.Height})");
             Console.WriteLine($"Time taken: {sw.ElapsedMilliseconds}ms");
             Console.WriteLine();
-            bmp2.Save("Images/HuskyRescaledDouble.jpg", ImageFormat.Jpeg);
+            bmp2.Save("Images/MrIncRescaledDoubleColored.jpg", ImageFormat.Jpeg);
 
         }   
     }

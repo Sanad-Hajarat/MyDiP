@@ -170,35 +170,43 @@ namespace SanadDiP
 
         public static Bitmap Rescale(Bitmap b, double factor) // Changes image resolution by resizing/rescaling
         {
+            Bitmap copy = (Bitmap)b.Clone();
             if (factor == 1)
-                return (Bitmap)b.Clone();
+                return copy;
+            if (copy.PixelFormat != PixelFormat.Format8bppIndexed && copy.PixelFormat != PixelFormat.Format24bppRgb)
+                copy = GrayScale(b);
+            
             int originalWidth = b.Width, originalHeight = b.Height;
             int rescaledW = (int)(originalWidth * factor);
             int rescaledH = (int)(originalHeight * factor);  // using factor to change bW and bH.
-            Bitmap copy = GrayScale(b);
-            Bitmap newB = new Bitmap(rescaledW, rescaledH, PixelFormat.Format8bppIndexed);
+
+            Bitmap newB = new Bitmap(rescaledW, rescaledH, copy.PixelFormat);
             newB.Palette = copy.Palette;
-            BitmapData original = copy.LockBits(new Rectangle(0, 0, originalWidth, originalHeight), ImageLockMode.ReadOnly, PixelFormat.Format8bppIndexed);
-            BitmapData rescaled = newB.LockBits(new Rectangle(0, 0, rescaledW, rescaledH), ImageLockMode.ReadWrite, PixelFormat.Format8bppIndexed);
+
+            BitmapData original = copy.LockBits(new Rectangle(0, 0, originalWidth, originalHeight), ImageLockMode.ReadOnly, copy.PixelFormat);
+            BitmapData rescaled = newB.LockBits(new Rectangle(0, 0, rescaledW, rescaledH), ImageLockMode.WriteOnly, copy.PixelFormat);
 
             int strideOriginal = original.Stride;
-            int offSetRescaled = rescaled.Stride - rescaledW;
+            int bpp = Image.GetPixelFormatSize(b.PixelFormat) / 8;
+            int offSetRescaled = rescaled.Stride - rescaledW * bpp;
 
             unsafe
             {
                 byte* originalPixel = (byte*)original.Scan0.ToPointer();  
                 byte* rescaledPixel = (byte*)rescaled.Scan0.ToPointer();  
 
-                for (int y = 0; y < rescaledH; y++, rescaledPixel += offSetRescaled) 
+                for (int y = 0; y < rescaledH; y++) 
                 {
                     int pixelY = (int) (y/factor);
                     byte* rowPtr = originalPixel + (pixelY * strideOriginal);
 
-                    for (int x = 0; x < rescaledW; x++, rescaledPixel++)
+                    for (int x = 0; x < rescaledW * bpp; x+= bpp, rescaledPixel+= bpp)
                     {
                         int pixelX = (int)(x / factor);
-                        *rescaledPixel = *(rowPtr + pixelX);
+                        for (int i = 0; i < bpp; i++)
+                            rescaledPixel[i] = (rowPtr + pixelX)[i];
                     }
+                    rescaledPixel += offSetRescaled;
                 }
             }
             
