@@ -118,7 +118,7 @@ namespace SanadDiP
             bool breakIt = false;       // boolean determines if we need to break search because non white border found.
             int skip = 0;               // how many pixels we are skipping from final image because of white border.
             int stride = bmd.Stride;    // NON-CHANGING stride value.
-            int last = bW - 2;          // used for calculating pixel on right side (last stands for last pixel in row).
+            int last = bW - 1;          // used for calculating pixel on right side (last stands for last pixel in row).
             
             unsafe
             {
@@ -158,14 +158,14 @@ namespace SanadDiP
                     skip++;         // for top & left ptrs calculation
                     last -= 2;      // for right (left is incremented)
 
-                    bH -= 2;        //  image width is decreasing
-                    bW -= 2;        // image height is decreasing
+                    bH--;           //  image width is decreasing
+                    bW--;           // image height is decreasing
                 }
             }
             newB.UnlockBits(bmd);
 
 
-            return b.Clone(new Rectangle(skip, skip, bW, bH), b.PixelFormat);   // skip is used to trace where the white boundaries are repeating.
+            return b.Clone(new Rectangle(skip, skip, bW-2, bH-2), b.PixelFormat);   // skip is used to trace where the white boundaries are repeating.
         } // Returns same Image cropped by exactly n rows and columns equally
 
         public static Bitmap Rescale(Bitmap b, double factor) // Changes image resolution by resizing/rescaling
