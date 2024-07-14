@@ -13,6 +13,7 @@ namespace SanadDiP
 
     /////// look at width & stride call cost
     /////// why static everything get to the core of it
+    
     public class Run
     {
         // commands to run in /DIPME/MyDiP to run program, always save first and dotnet build
@@ -104,7 +105,7 @@ namespace SanadDiP
             Console.WriteLine();
 
             // Task 7: Rescale image to best fit (either horizontally or vertically)
-            
+
             bmp.Save("Images/ShoeNormal.jpg", ImageFormat.Jpeg);
 
             sw.Restart();
@@ -118,13 +119,6 @@ namespace SanadDiP
             bmp = ImageAlteration.GrayScale(bmp);
             bmp.Save("Images/ShoeGray.jpg", ImageFormat.Jpeg);
 
-            sw.Restart();
-            bmp2 = ImageAlteration.Rescale(bmp, 0.25);
-            sw.Stop();
-            Console.WriteLine($"Image Before size = ({bmp.Width}, {bmp.Height}), Image After size = ({bmp2.Width}, {bmp2.Height})");
-            Console.WriteLine($"Time taken: {sw.ElapsedMilliseconds}ms");
-            Console.WriteLine();
-            bmp2.Save("Images/ShoeRescaledQuarter.jpg", ImageFormat.Jpeg);
         }   
     }
 }
