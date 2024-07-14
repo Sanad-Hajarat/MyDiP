@@ -124,9 +124,8 @@ namespace SanadDiP
             int skipLeft  = 0;
             int skipRight = 0;
             int skipBot   = 0;
-            int stride = bmd.Stride;    // NON-CHANGING stride value.
 
-            int last = bW - 1;          // used for calculating pixel on right side (last stands for last pixel in row).
+            int stride = bmd.Stride;    // NON-CHANGING stride value.
             
             unsafe
             {  
