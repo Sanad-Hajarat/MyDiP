@@ -27,6 +27,8 @@ namespace SanadDiP
             Stopwatch sw = new Stopwatch();
             string address = "/home/sanad/Desktop/My Files";
 
+/*
+
             // Going through tasks:
 
             // Task 1: Convert gray scale images to black and white (binarization) using static threshold, mean threshold.
@@ -118,6 +120,28 @@ namespace SanadDiP
 
             bmp = ImageAlteration.GrayScale(bmp);
             bmp.Save("Images/ShoeGray.jpg", ImageFormat.Jpeg);
+*/
+
+            //// Tests
+
+            Bitmap bmp = new Bitmap(address + "/Milestone-examples/ShapeDetectionTest.png");    
+            bmp.Save("Images/Shapes1.jpg", ImageFormat.Jpeg);
+            sw.Start();
+            Bitmap bmp2 = EdgeDetect.Sobel(bmp, true);
+            sw.Stop();
+            Console.WriteLine($"Time taken for horizontal: {sw.ElapsedMilliseconds}ms");
+            sw.Restart();
+            Bitmap bmp3 = EdgeDetect.Sobel(bmp, false);
+            sw.Stop();
+            Console.WriteLine($"Time taken for vertical: {sw.ElapsedMilliseconds}ms");
+            bmp2.Save("Images/Shapes1EdgeH.jpg", ImageFormat.Jpeg);
+            bmp3.Save("Images/Shapes1EdgeV.jpg", ImageFormat.Jpeg);
+            sw.Restart();
+            Bitmap bmp4 = EdgeDetect.Combine(bmp2, bmp3);
+            sw.Stop();
+            Console.WriteLine($"Time taken for combination: {sw.ElapsedMilliseconds}ms");
+            bmp4.Save("Images/Shapes1Edges.jpg", ImageFormat.Jpeg);
+            Console.WriteLine();
 
         }   
     }
