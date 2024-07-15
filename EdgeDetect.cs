@@ -42,7 +42,7 @@ namespace SanadDiP
                 {
                     for (int x = 0; x < bW; x++, ptr++)
                     {
-                        if (x < 1 || x >= bW - 1 || y < 1 || y >= bH + 1) 
+                        if (x < 1 || x >= bW - 1 || y < 1 || y >= bH - 1) 
                             *ptr = 0;
                         else
                         {
@@ -52,6 +52,68 @@ namespace SanadDiP
                                 for (int j = 0; j < 3; j++) 
                                 {
                                     sum += kernel[i, j] * *(grayPixel + (i * stride) + j);
+                                }
+                            }
+
+                            if (sum > 255)
+                                sum = 255;
+                            else if (sum < 0)
+                                sum = 0;
+
+                            *ptr = (byte)sum;
+
+                            grayPixel++;
+                        }
+                    }
+                    ptr += ptrOffset;
+                    if (y < 1)
+                        continue;
+                    grayPixel += grayOffset;
+                }
+            }
+
+            gray.UnlockBits(grayImg);
+            final.UnlockBits(finalImg);
+
+            return final;
+        }
+
+        public static Bitmap Laplace(Bitmap b) 
+        {
+            int [,] kernel = new int [,] { {0, 1, 0}, {1, -4, 1}, {0, 1, 0} };
+
+            int bW = b.Width, bH = b.Height;
+
+            Bitmap gray = ImageAlteration.GrayScale(b);
+            Bitmap final = new Bitmap(bW, bH, PixelFormat.Format8bppIndexed);
+
+            BitmapData grayImg = gray.LockBits(new Rectangle(0, 0, bW, bH), ImageLockMode.ReadOnly, PixelFormat.Format8bppIndexed);
+            BitmapData finalImg = final.LockBits(new Rectangle(0, 0, bW, bH), ImageLockMode.ReadWrite, PixelFormat.Format8bppIndexed);
+
+            int stride = grayImg.Stride;
+
+            int ptrOffset = stride - bW;
+            int grayOffset = stride - bW + 2;
+            
+            unsafe
+            {
+                byte* grayPixel = (byte*)grayImg.Scan0.ToPointer();
+                byte* ptr = (byte*)finalImg.Scan0.ToPointer();
+
+                for (int y = 0; y < bH; y++)
+                {
+                    for (int x = 0; x < bW; x++, ptr++)
+                    {
+                        if (x < 1 || x >= bW - 1 || y < 1 || y >= bH - 1) 
+                            *ptr = 0;
+                        else
+                        {
+                            int sum = 0;
+                            for (int i = 0; i < 3; i++)
+                            {
+                                for (int j = 0; j < 3; j++) 
+                                {
+                                    sum += kernel[i, j] * (*(grayPixel + (i * stride) + j));
                                 }
                             }
 

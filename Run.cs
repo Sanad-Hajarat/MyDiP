@@ -126,21 +126,28 @@ namespace SanadDiP
 
             Bitmap bmp = new Bitmap(address + "/Milestone-examples/ShapeDetectionTest.png");    
             bmp.Save("Images/Shapes1.jpg", ImageFormat.Jpeg);
+            
             sw.Start();
+            Bitmap bmp1 = EdgeDetect.Laplace(bmp);
+            sw.Stop();
+            Console.WriteLine($"Time taken for Laplacian: {sw.ElapsedMilliseconds}ms");
+            bmp1.Save("Images/Shapes1EdgesLaplace.jpg", ImageFormat.Jpeg);
+            
+            sw.Restart();
             Bitmap bmp2 = EdgeDetect.Sobel(bmp, true);
             sw.Stop();
-            Console.WriteLine($"Time taken for horizontal: {sw.ElapsedMilliseconds}ms");
+            Console.WriteLine($"Time taken for Horizontal Sobel: {sw.ElapsedMilliseconds}ms");
             sw.Restart();
             Bitmap bmp3 = EdgeDetect.Sobel(bmp, false);
             sw.Stop();
-            Console.WriteLine($"Time taken for vertical: {sw.ElapsedMilliseconds}ms");
-            bmp2.Save("Images/Shapes1EdgeH.jpg", ImageFormat.Jpeg);
-            bmp3.Save("Images/Shapes1EdgeV.jpg", ImageFormat.Jpeg);
+            Console.WriteLine($"Time taken for Vertical Sobel: {sw.ElapsedMilliseconds}ms");
+            bmp2.Save("Images/Shapes1EdgeHSobel.jpg", ImageFormat.Jpeg);
+            bmp3.Save("Images/Shapes1EdgeVSobel.jpg", ImageFormat.Jpeg);
             sw.Restart();
             Bitmap bmp4 = EdgeDetect.Combine(bmp2, bmp3);
             sw.Stop();
             Console.WriteLine($"Time taken for combination: {sw.ElapsedMilliseconds}ms");
-            bmp4.Save("Images/Shapes1Edges.jpg", ImageFormat.Jpeg);
+            bmp4.Save("Images/Shapes1EdgesSobel.jpg", ImageFormat.Jpeg);
             Console.WriteLine();
 
         }   
