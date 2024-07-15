@@ -124,14 +124,16 @@ namespace SanadDiP
 
             //// Tests
 
-            Bitmap bmp = new Bitmap(address + "/Milestone-examples/ShapeDetectionTest.png");    
-            bmp.Save("Images/Shapes1.jpg", ImageFormat.Jpeg);
+            Bitmap bmp = new Bitmap(address + "/Milestone-examples/ShapeDetectionTest2.png");    
+            bmp.Save("Images/Shapes2.jpg", ImageFormat.Jpeg);
             
+            bmp = Binarization.ApplyStaticThreshold(bmp, 128); // Apply Binarization for noise
+
             sw.Start();
             Bitmap bmp1 = EdgeDetect.Laplace(bmp);
             sw.Stop();
             Console.WriteLine($"Time taken for Laplacian: {sw.ElapsedMilliseconds}ms");
-            bmp1.Save("Images/Shapes1EdgesLaplace.jpg", ImageFormat.Jpeg);
+            bmp1.Save("Images/Shapes2EdgesLaplace.jpg", ImageFormat.Jpeg);
             
             sw.Restart();
             Bitmap bmp2 = EdgeDetect.Sobel(bmp, true);
@@ -141,13 +143,13 @@ namespace SanadDiP
             Bitmap bmp3 = EdgeDetect.Sobel(bmp, false);
             sw.Stop();
             Console.WriteLine($"Time taken for Vertical Sobel: {sw.ElapsedMilliseconds}ms");
-            bmp2.Save("Images/Shapes1EdgeHSobel.jpg", ImageFormat.Jpeg);
-            bmp3.Save("Images/Shapes1EdgeVSobel.jpg", ImageFormat.Jpeg);
+            bmp2.Save("Images/Shapes2EdgeHSobel.jpg", ImageFormat.Jpeg);
+            bmp3.Save("Images/Shapes2EdgeVSobel.jpg", ImageFormat.Jpeg);
             sw.Restart();
             Bitmap bmp4 = EdgeDetect.Combine(bmp2, bmp3);
             sw.Stop();
             Console.WriteLine($"Time taken for combination: {sw.ElapsedMilliseconds}ms");
-            bmp4.Save("Images/Shapes1EdgesSobel.jpg", ImageFormat.Jpeg);
+            bmp4.Save("Images/Shapes2EdgesSobel.jpg", ImageFormat.Jpeg);
             Console.WriteLine();
 
         }   
