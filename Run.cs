@@ -2,6 +2,7 @@
 using System.Diagnostics;
 using System.Drawing;
 using System.Drawing.Imaging;
+using System.Collections.Generic; 
 
 namespace SanadDiP
 {
@@ -18,7 +19,8 @@ namespace SanadDiP
     {
         // commands to run in /DIPME/MyDiP to run program, always save first and dotnet build
         // cd /DIPME/MyDiP
-        // dotnet publish -c Release -r win-x64 --self-contained
+        // ~/.dotnet/dotnet publish -c Release -r win-x64 --self-contained
+        //////// dotnet publish -c Release -r win-x64 --self-contained
         // wine /home/sanad/DIPME/MyDiP/bin/Release/net6.0/win-x64/publish/MyDiP.exe
         
         static void Main(string[] args)
@@ -105,53 +107,37 @@ namespace SanadDiP
             Console.WriteLine($"Time taken: {sw.ElapsedMilliseconds}ms");
             bmp2.Save("Images/ShoeNoWhiteBounds.jpg", ImageFormat.Jpeg);
             Console.WriteLine();
-
+*/
             // Task 7: Rescale image to best fit (either horizontally or vertically)
 
-            bmp.Save("Images/ShoeNormal.jpg", ImageFormat.Jpeg);
+            Bitmap bmp = new Bitmap(address + "/8BitImages/lena_gray.bmp");
 
             sw.Restart();
-            bmp2 = ImageAlteration.Rescale(bmp, 0.2);
+            Bitmap bmp2 = ImageAlteration.RescaleGray(bmp, 0.33);
             sw.Stop();
             Console.WriteLine($"Image Before size = ({bmp.Width}, {bmp.Height}), Image After size = ({bmp2.Width}, {bmp2.Height})");
             Console.WriteLine($"Time taken: {sw.ElapsedMilliseconds}ms");
             Console.WriteLine();
-            bmp2.Save("Images/ShoeRescaledFifth.jpg", ImageFormat.Jpeg);
+            bmp2.Save("Images/LenaRescaledThirdGray.jpg", ImageFormat.Jpeg);
 
-            bmp = ImageAlteration.GrayScale(bmp);
-            bmp.Save("Images/ShoeGray.jpg", ImageFormat.Jpeg);
-*/
 
             //// Tests
-
-            Bitmap bmp = new Bitmap(address + "/Milestone-examples/ShapeDetectionTest2.png");    
-            bmp.Save("Images/Shapes2.jpg", ImageFormat.Jpeg);
             
-            bmp = Binarization.ApplyStaticThreshold(bmp, 128); // Apply Binarization for noise
+            // Best image is using Laplace.
 
-            sw.Start();
-            Bitmap bmp1 = EdgeDetect.Laplace(bmp);
-            sw.Stop();
-            Console.WriteLine($"Time taken for Laplacian: {sw.ElapsedMilliseconds}ms");
-            bmp1.Save("Images/Shapes2EdgesLaplace.jpg", ImageFormat.Jpeg);
-            
-            sw.Restart();
-            Bitmap bmp2 = EdgeDetect.Sobel(bmp, true);
-            sw.Stop();
-            Console.WriteLine($"Time taken for Horizontal Sobel: {sw.ElapsedMilliseconds}ms");
-            sw.Restart();
-            Bitmap bmp3 = EdgeDetect.Sobel(bmp, false);
-            sw.Stop();
-            Console.WriteLine($"Time taken for Vertical Sobel: {sw.ElapsedMilliseconds}ms");
-            bmp2.Save("Images/Shapes2EdgeHSobel.jpg", ImageFormat.Jpeg);
-            bmp3.Save("Images/Shapes2EdgeVSobel.jpg", ImageFormat.Jpeg);
-            sw.Restart();
-            Bitmap bmp4 = EdgeDetect.Combine(bmp2, bmp3);
-            sw.Stop();
-            Console.WriteLine($"Time taken for combination: {sw.ElapsedMilliseconds}ms");
-            bmp4.Save("Images/Shapes2EdgesSobel.jpg", ImageFormat.Jpeg);
-            Console.WriteLine();
+            // Bitmap b = new Bitmap(address + "/Milestone-examples/ShapeDetectionTest.png");
+            // Console.WriteLine($"Width: {b.Width}, Height: {b.Height}");
 
+            // b = ImageAlteration.GrayScale(b);
+            // b = Binarization.ApplyStaticThreshold(b, 127);
+            // b = EdgeDetect.Laplace(b);
+
+            // List<Point> list = Extraction.allShapes(b);
+            // foreach (Point item in list)
+            // {
+            //     Console.WriteLine($"({item.X}, {item.Y})");
+            // }
+            // Console.WriteLine($"List Length = {list.Count}");
         }   
     }
 }

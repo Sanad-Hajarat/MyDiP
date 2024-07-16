@@ -296,10 +296,11 @@
 /home/sanad/DIPME/MyDiP/obj/Release/net6.0/win-x64/MyDiP.AssemblyInfoInputs.cache
 /home/sanad/DIPME/MyDiP/obj/Release/net6.0/win-x64/MyDiP.AssemblyInfo.cs
 /home/sanad/DIPME/MyDiP/obj/Release/net6.0/win-x64/MyDiP.csproj.CoreCompileInputs.cache
-/home/sanad/DIPME/MyDiP/obj/Release/net6.0/win-x64/MyDiP.csproj.CopyComplete
 /home/sanad/DIPME/MyDiP/obj/Release/net6.0/win-x64/MyDiP.dll
 /home/sanad/DIPME/MyDiP/obj/Release/net6.0/win-x64/refint/MyDiP.dll
 /home/sanad/DIPME/MyDiP/obj/Release/net6.0/win-x64/MyDiP.pdb
 /home/sanad/DIPME/MyDiP/obj/Release/net6.0/win-x64/MyDiP.genruntimeconfig.cache
 /home/sanad/DIPME/MyDiP/obj/Release/net6.0/win-x64/ref/MyDiP.dll
-/home/sanad/DIPME/MyDiP/bin/Release/net6.0/win-x64/mscordaccore_amd64_amd64_6.0.3224.31407.dll
+/home/sanad/DIPME/MyDiP/bin/Release/net6.0/win-x64/mscordaccore_amd64_amd64_6.0.3124.26714.dll
+/home/sanad/DIPME/MyDiP/obj/Release/net6.0/win-x64/MyDiP.sourcelink.json
+/home/sanad/DIPME/MyDiP/obj/Release/net6.0/win-x64/MyDiP.csproj.Up2Date

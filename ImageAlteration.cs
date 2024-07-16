@@ -110,9 +110,10 @@ namespace SanadDiP
 
         public static Bitmap RemoveWhiteBounds(Bitmap b) // Remove's white boundary from image in an equal manner.
         {
-            Bitmap newB = Binarization.ApplyStaticThreshold(b, 200); // Applies grayscale and high threshold to define pure white from shadow
+            Bitmap newB = GrayScale(b);
+            Bitmap final = Binarization.ApplyStaticThreshold(newB, 200); // Applies grayscale and high threshold to define pure white from shadow
             int bW = b.Width, bH = b.Height;
-            BitmapData bmd = newB.LockBits(new Rectangle(0, 0, bW, bH), 
+            BitmapData bmd = final.LockBits(new Rectangle(0, 0, bW, bH), 
                 ImageLockMode.ReadOnly, PixelFormat.Format8bppIndexed); // working on same image and calculating pixels to be removed
 
             bool breakTop   = false;      // boolean determines if we need to break search because non white border found.
@@ -130,7 +131,7 @@ namespace SanadDiP
             unsafe
             {  
                 byte* ptr = (byte*)bmd.Scan0.ToPointer();                        // First pixel from top-left corner of image
-                while (true)
+                while (true) //change cond//////////
                 {
                     byte* ptrTop = ptr + stride*skipTop;
                     for (int i = 0; i < bW; i++)
@@ -201,14 +202,71 @@ namespace SanadDiP
 
                     skipBot++;
                 }
+
+                // shorter and more readable method
             }
 
-            newB.UnlockBits(bmd);
+            final.UnlockBits(bmd);
 
 
             return b.Clone(new Rectangle(skipLeft, skipTop, bW-skipRight-skipLeft, bH-skipBot-skipTop), b.PixelFormat);   
 
         }   // Returns same Image cropped by exactly n rows and columns equally
+        public static Bitmap RescaleGray(Bitmap b, double factor) // Changes image resolution by resizing/rescaling
+        {
+            Bitmap copy = GrayScale(b);
+            if (factor == 1)
+                return copy;
+            
+            int originalWidth = copy.Width, originalHeight = copy.Height;
+            int rescaledW = (int)(originalWidth * factor);
+            int rescaledH = (int)(originalHeight * factor);  // using factor to change bW and bH.
+
+            Bitmap newB = new Bitmap(rescaledW, rescaledH, PixelFormat.Format8bppIndexed);
+            newB.Palette = copy.Palette;
+
+            BitmapData original = copy.LockBits(new Rectangle(0, 0, originalWidth, originalHeight), ImageLockMode.ReadOnly, PixelFormat.Format8bppIndexed);
+            BitmapData rescaled = newB.LockBits(new Rectangle(0, 0, rescaledW, rescaledH), ImageLockMode.WriteOnly, PixelFormat.Format8bppIndexed);
+
+            int strideOriginal = original.Stride;
+            int offSetRescaled = rescaled.Stride - rescaledW;
+
+            double stepX = 1.0/factor, stepY = 1.0/factor;
+
+            unsafe
+            {
+                byte* originalPixel = (byte*)original.Scan0.ToPointer();  
+                byte* rescaledPixel = (byte*)rescaled.Scan0.ToPointer();  
+
+                for (int y = 0; y < rescaledH; y++, rescaledPixel += offSetRescaled) 
+                {
+                    byte* rowPtr = originalPixel;
+                    for (int x = 0; x < rescaledW; x++, rescaledPixel++)
+                    {
+                        *rescaledPixel = *rowPtr;
+                        if (stepX >= 1)
+                        {
+                            rowPtr += (int) stepX;
+                            stepX = 1.0/factor;
+                        }
+                        else
+                            stepX += 1.0/factor;
+                    }
+                    if (stepY >= 1)
+                    {
+                        originalPixel += (int) stepY * strideOriginal;
+                        stepY = 1.0/factor;
+                    }
+                    else
+                        stepY += 1.0/factor;
+                }
+            }
+            
+            copy.UnlockBits(original);
+            newB.UnlockBits(rescaled);
+            
+            return newB;
+        }
 
         public static Bitmap Rescale(Bitmap b, double factor) // Changes image resolution by resizing/rescaling
         {
@@ -245,7 +303,7 @@ namespace SanadDiP
 
                     for (int x = 0; x < rescaledW * bpp; x+= bpp, rescaledPixel+= bpp)
                     {
-                        int pixelX = (int)(x / factor);
+                        int pixelX = (int) (x / factor);
                         for (int i = 0; i < bpp; i++)
                             rescaledPixel[i] = (rowPtr + pixelX)[i];
                     }
@@ -258,5 +316,6 @@ namespace SanadDiP
             
             return newB;
         }
+
     } 
 }
