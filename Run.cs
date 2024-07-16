@@ -14,6 +14,7 @@ namespace SanadDiP
 
     /////// look at width & stride call cost
     /////// why static everything get to the core of it
+    /////// Challenge yourself ( EXTRA ): what if there is noise (speckles) in image how to remove white bounds?
     
     public class Run
     {
@@ -47,10 +48,10 @@ namespace SanadDiP
             staticBinary.Save("Images/ThreshStatic.jpg", ImageFormat.Jpeg);
             meanBinary.Save("Images/ThreshMean.jpg", ImageFormat.Jpeg);
             Console.WriteLine();
-
+*/
             // Task 2: Concatenate two gray scale images horizontally and vertically.
 
-            bmp = new Bitmap(address + "/8BitImages/lena_gray.bmp");
+            Bitmap bmp = new Bitmap(address + "/8BitImages/lena_gray.bmp");
             Bitmap bmp2 = new Bitmap(address + "/8BitImages/CHEQUE8bit.bmp");
             sw.Restart();
             Bitmap vertical = Concatenate.Concat(bmp, bmp2, false);
@@ -60,10 +61,20 @@ namespace SanadDiP
             Bitmap horizontal = Concatenate.Concat(bmp, bmp2, true);
             sw.Stop();
             Console.WriteLine($"Time taken for two {bmp2.PixelFormat} images of sizes ({bmp.Width}, {bmp.Height}) & ({bmp2.Width}, {bmp2.Height}) for Horizontal Concatenation: {sw.ElapsedMilliseconds}ms");
+
+            sw.Restart();
+            vertical = Concatenate.ConcatOne(bmp, bmp2, false);
+            sw.Stop();
+            Console.WriteLine($"Time taken for two {bmp.PixelFormat} images of sizes ({bmp.Width}, {bmp.Height}) & ({bmp2.Width}, {bmp2.Height}) for Vertical Concatenation (ONE): {sw.ElapsedMilliseconds}ms");
+            sw.Restart();
+            horizontal = Concatenate.ConcatOne(bmp, bmp2, true);
+            sw.Stop();
+            Console.WriteLine($"Time taken for two {bmp2.PixelFormat} images of sizes ({bmp.Width}, {bmp.Height}) & ({bmp2.Width}, {bmp2.Height}) for Horizontal Concatenation (ONE): {sw.ElapsedMilliseconds}ms");
+
             vertical.Save("Images/ConcatVerticalLenaCheque.jpg", ImageFormat.Jpeg);
             horizontal.Save("Images/ConcatHorizontalLenaCheque.jpg", ImageFormat.Jpeg);
             Console.WriteLine();
-
+/*
             // Tasks 3 & 4: Convert 24 bits color & 1-bit binary images to 8-bit grayscale image. 
             
             bmp = new Bitmap(address + "/1BitImages/2ChequesBW.bmp");
@@ -110,10 +121,10 @@ namespace SanadDiP
 */
             // Task 7: Rescale image to best fit (either horizontally or vertically)
 
-            Bitmap bmp = new Bitmap(address + "/8BitImages/lena_gray.bmp");
+            bmp = new Bitmap(address + "/8BitImages/lena_gray.bmp");
 
             sw.Restart();
-            Bitmap bmp2 = ImageAlteration.RescaleGray(bmp, 0.33);
+            bmp2 = ImageAlteration.RescaleGray(bmp, 0.33);
             sw.Stop();
             Console.WriteLine($"Image Before size = ({bmp.Width}, {bmp.Height}), Image After size = ({bmp2.Width}, {bmp2.Height})");
             Console.WriteLine($"Time taken: {sw.ElapsedMilliseconds}ms");

@@ -110,8 +110,8 @@ namespace SanadDiP
 
         public static Bitmap RemoveWhiteBounds(Bitmap b) // Remove's white boundary from image in an equal manner.
         {
-            Bitmap newB = GrayScale(b);
-            Bitmap final = Binarization.ApplyStaticThreshold(newB, 200); // Applies grayscale and high threshold to define pure white from shadow
+            Bitmap newB = GrayScale(b);                                     // Applies grayscale 
+            Bitmap final = Binarization.ApplyStaticThreshold(newB, 200);    // Apply high threshold to define pure white from shadow
             int bW = b.Width, bH = b.Height;
             BitmapData bmd = final.LockBits(new Rectangle(0, 0, bW, bH), 
                 ImageLockMode.ReadOnly, PixelFormat.Format8bppIndexed); // working on same image and calculating pixels to be removed
@@ -131,7 +131,7 @@ namespace SanadDiP
             unsafe
             {  
                 byte* ptr = (byte*)bmd.Scan0.ToPointer();                        // First pixel from top-left corner of image
-                while (true) //change cond//////////
+                while (skipTop < bH)
                 {
                     byte* ptrTop = ptr + stride*skipTop;
                     for (int i = 0; i < bW; i++)
@@ -149,7 +149,7 @@ namespace SanadDiP
                     skipTop++;
                 }
 
-                while (true)
+                while (skipLeft < bW)
                 {
                     byte* ptrLeft = ptr + stride*skipTop + skipLeft;
                     for (int i = 0; i < bH - skipTop; i++)
@@ -167,7 +167,7 @@ namespace SanadDiP
                     skipLeft++;
                 }
 
-                while (true)
+                while (skipLeft + skipRight < bW)
                 {
                     byte* ptrRight = ptr + stride*skipTop + bW - 1 - skipRight;
                     for (int i = 0; i < bH - skipTop; i++)
@@ -185,7 +185,7 @@ namespace SanadDiP
                     skipRight++;
                 }
 
-                while (true)
+                while (skipTop + skipBot < bH)
                 {
                     byte* ptrBot = ptr + stride*(bH-1-skipBot) + skipLeft;
                     for (int i = 0; i < bW - skipRight - skipLeft; i++)
