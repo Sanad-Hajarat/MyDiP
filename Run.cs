@@ -48,7 +48,7 @@ namespace SanadDiP
             staticBinary.Save("Images/ThreshStatic.jpg", ImageFormat.Jpeg);
             meanBinary.Save("Images/ThreshMean.jpg", ImageFormat.Jpeg);
             Console.WriteLine();
-*/
+
             // Task 2: Concatenate two gray scale images horizontally and vertically.
 
             Bitmap bmp = new Bitmap(address + "/8BitImages/lena_gray.bmp");
@@ -74,7 +74,7 @@ namespace SanadDiP
             vertical.Save("Images/ConcatVerticalLenaCheque.jpg", ImageFormat.Jpeg);
             horizontal.Save("Images/ConcatHorizontalLenaCheque.jpg", ImageFormat.Jpeg);
             Console.WriteLine();
-/*
+
             // Tasks 3 & 4: Convert 24 bits color & 1-bit binary images to 8-bit grayscale image. 
             
             bmp = new Bitmap(address + "/1BitImages/2ChequesBW.bmp");
@@ -109,16 +109,17 @@ namespace SanadDiP
 
             // Task 6: Remove white boundaries from an image.
 
-            bmp = new Bitmap(address + "/24BitImages/shoe.jpeg");
-            
+            Bitmap bmp = new Bitmap(address + "/24BitImages/Husky.jpg");
+            Bitmap bmp2;
+
             sw.Restart();
-            bmp2 = ImageAlteration.RemoveWhiteBounds(bmp);
+            bmp2 = ImageAlteration.RemoveWhiteBoundsWholeImage(bmp);
             sw.Stop();
             Console.WriteLine($"Image Before size = ({bmp.Width}, {bmp.Height}), Image After size = ({bmp2.Width}, {bmp2.Height})");
-            Console.WriteLine($"Time taken: {sw.ElapsedMilliseconds}ms");
-            bmp2.Save("Images/ShoeNoWhiteBounds.jpg", ImageFormat.Jpeg);
+            Console.WriteLine($"Time taken for whole image method: {sw.ElapsedMilliseconds}ms");
+            bmp2.Save("Images/HuskyNoWhiteBounds.jpg", ImageFormat.Jpeg);
             Console.WriteLine();
-*/
+
             // Task 7: Rescale image to best fit (either horizontally or vertically)
 
             bmp = new Bitmap(address + "/8BitImages/lena_gray.bmp");
@@ -130,25 +131,35 @@ namespace SanadDiP
             Console.WriteLine($"Time taken: {sw.ElapsedMilliseconds}ms");
             Console.WriteLine();
             bmp2.Save("Images/LenaRescaledThirdGray.jpg", ImageFormat.Jpeg);
-
-
+*/
             //// Tests
             
             // Best image is using Laplace.
 
-            // Bitmap b = new Bitmap(address + "/Milestone-examples/ShapeDetectionTest.png");
-            // Console.WriteLine($"Width: {b.Width}, Height: {b.Height}");
+            Bitmap b = new Bitmap(address + "/Milestone-examples/ShapeDetectionTest2.png");
+            Console.WriteLine($"Width: {b.Width}, Height: {b.Height}");
 
-            // b = ImageAlteration.GrayScale(b);
-            // b = Binarization.ApplyStaticThreshold(b, 127);
-            // b = EdgeDetect.Laplace(b);
+            b = ImageAlteration.GrayScale(b);
+            b = Binarization.ApplyStaticThreshold(b, 127);
+            b.Save("Images/Shapes2Binary.jpg", ImageFormat.Jpeg);
 
-            // List<Point> list = Extraction.allShapes(b);
-            // foreach (Point item in list)
-            // {
-            //     Console.WriteLine($"({item.X}, {item.Y})");
-            // }
-            // Console.WriteLine($"List Length = {list.Count}");
-        }   
+            Bitmap b2 = Contours.Laplace(b);
+
+            List<Point> list = Extraction.allShapes(b2);
+            Console.WriteLine($"List Length = {list.Count}");
+
+
+            List<List <Point>> listInList = Contours.FindContours(b);
+            foreach (List<Point> lst in listInList)
+            {
+                Console.WriteLine($"({lst[0].X}, {lst[0].Y})");
+            }
+            Console.WriteLine($"List Length = {listInList.Count}");
+
+            // b = ImageAlteration.RemoveWhiteBounds(b);
+            // b.Save("Images/Shapes2NoWhite.jpg", ImageFormat.Jpeg);
+
+        }  
     }
 }
+

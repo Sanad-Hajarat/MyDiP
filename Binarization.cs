@@ -21,8 +21,8 @@ namespace SanadDiP
             t = (byte)((t < 0) ? 0 : (t > 255) ? 255 : t);              // Pixel Value is manipulated
             
             int bW = b.Width, bH = b.Height;
-            Bitmap copy = ImageAlteration.GrayScale(b);
-            BitmapData bmd1 = copy.LockBits(new Rectangle(0, 0, bW, bH), ImageLockMode.ReadWrite, PixelFormat.Format8bppIndexed);
+            Bitmap final = ImageAlteration.GrayScale(b);
+            BitmapData bmd1 = final.LockBits(new Rectangle(0, 0, bW, bH), ImageLockMode.ReadWrite, PixelFormat.Format8bppIndexed);
 
             int stride = bmd1.Stride;
             int offSet = stride - bW;
@@ -39,16 +39,18 @@ namespace SanadDiP
                    pixel += offSet;
                }
             }
-            copy.UnlockBits(bmd1);
+            final.UnlockBits(bmd1);
             
-            return copy;
+            return final;
         }
         private static int GetMean(Bitmap b) // returns mean pixel value in gray image
         {
             int sum = 0;
             
             int bW = b.Width, bH = b.Height;
-            BitmapData bmd1 = b.LockBits(new Rectangle(0, 0, bW, bH), ImageLockMode.ReadOnly, PixelFormat.Format8bppIndexed);
+
+            Bitmap newB = ImageAlteration.GrayScale(b);
+            BitmapData bmd1 = newB.LockBits(new Rectangle(0, 0, bW, bH), ImageLockMode.ReadOnly, PixelFormat.Format8bppIndexed);
 
             int offSet = bmd1.Stride - bW;
 
@@ -60,7 +62,7 @@ namespace SanadDiP
                 for (int y = 0; y < bH; y++)
                 {
                     for (int x = 0; x < bW; x++, pixel++) 
-                        sum += pixel[0]; // sums up pixel values
+                        sum += *pixel; // sums up pixel values
                     pixel += offSet;
                 }
             }

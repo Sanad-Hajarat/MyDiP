@@ -42,9 +42,8 @@ namespace SanadDiP
                 {
                     for (int x = 0; x < bW; x++, ptr++) 
                     {
-                        if (*ptr >= 126)
+                        if (*ptr > 126)
                         {
-                            // Console.WriteLine("first condition");
                             if (*(ptr-stride-1) < 126 && *(ptr-stride) < 126 && *(ptr-stride+1) < 126 && *(ptr-1) < 126)
                             {
                                 list.Add(new Point(x, y));

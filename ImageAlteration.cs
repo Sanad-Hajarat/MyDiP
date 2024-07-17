@@ -115,25 +115,22 @@ namespace SanadDiP
             int bW = b.Width, bH = b.Height;
             BitmapData bmd = final.LockBits(new Rectangle(0, 0, bW, bH), 
                 ImageLockMode.ReadOnly, PixelFormat.Format8bppIndexed); // working on same image and calculating pixels to be removed
+            
+            bool breakTop = false, breakLeft = false, breakRight = false, breakBot = false;
 
-            bool breakTop   = false;      // boolean determines if we need to break search because non white border found.
-            bool breakLeft  = false;
-            bool breakRight = false;
-            bool breakBot   = false;
-
-            int skipTop   = 0;         // how many pixels we are skipping from final image because of white border.
-            int skipLeft  = 0;
-            int skipRight = 0;
-            int skipBot   = 0;
+            int skipY   = 0;         // how many pixels we are skipping from final image because of white border.
+            int skipX  = 0;
+            int finalW = 0;
+            int finalH   = 0;
 
             int stride = bmd.Stride;    // NON-CHANGING stride value.
-            
+
             unsafe
             {  
                 byte* ptr = (byte*)bmd.Scan0.ToPointer();                        // First pixel from top-left corner of image
-                while (skipTop < bH)
+                while (skipY < bH)
                 {
-                    byte* ptrTop = ptr + stride*skipTop;
+                    byte* ptrTop = ptr + stride*skipY;
                     for (int i = 0; i < bW; i++)
                     {
                         if (*ptrTop < 255) // if either top or bot pixels not white
@@ -146,13 +143,13 @@ namespace SanadDiP
                     if (breakTop)
                         break;
 
-                    skipTop++;
+                    skipY++;
                 }
 
-                while (skipLeft < bW)
+                while (skipX < bW)
                 {
-                    byte* ptrLeft = ptr + stride*skipTop + skipLeft;
-                    for (int i = 0; i < bH - skipTop; i++)
+                    byte* ptrLeft = ptr + stride*skipY + skipX;
+                    for (int i = 0; i < bH - skipY; i++)
                     {
                         if (*ptrLeft < 255) // if either top or bot pixels not white
                         { 
@@ -164,13 +161,13 @@ namespace SanadDiP
                     if (breakLeft)
                         break;
 
-                    skipLeft++;
+                    skipX++;
                 }
 
-                while (skipLeft + skipRight < bW)
+                while (skipX + finalW < bW)
                 {
-                    byte* ptrRight = ptr + stride*skipTop + bW - 1 - skipRight;
-                    for (int i = 0; i < bH - skipTop; i++)
+                    byte* ptrRight = ptr + stride*skipY + bW - 1 - finalW;
+                    for (int i = 0; i < bH - skipY; i++)
                     {
                         if (*ptrRight < 255) // if either top or bot pixels not white
                         { 
@@ -182,13 +179,13 @@ namespace SanadDiP
                     if (breakRight)
                         break;
 
-                    skipRight++;
+                    finalW++;
                 }
 
-                while (skipTop + skipBot < bH)
+                while (skipY + finalH < bH)
                 {
-                    byte* ptrBot = ptr + stride*(bH-1-skipBot) + skipLeft;
-                    for (int i = 0; i < bW - skipRight - skipLeft; i++)
+                    byte* ptrBot = ptr + stride*(bH-1-finalH) + skipX;
+                    for (int i = 0; i < bW - finalW - skipX; i++)
                     {
                         if (*ptrBot < 255) // if either top or bot pixels not white
                         { 
@@ -200,7 +197,7 @@ namespace SanadDiP
                     if (breakBot)
                         break;
 
-                    skipBot++;
+                    finalH++;
                 }
 
                 // shorter and more readable method
@@ -209,9 +206,53 @@ namespace SanadDiP
             final.UnlockBits(bmd);
 
 
-            return b.Clone(new Rectangle(skipLeft, skipTop, bW-skipRight-skipLeft, bH-skipBot-skipTop), b.PixelFormat);   
+            return b.Clone(new Rectangle(skipX, skipY, bW-finalW-skipX, bH-finalH-skipY), b.PixelFormat);   
 
         }   // Returns same Image cropped by exactly n rows and columns equally
+
+        public static Bitmap RemoveWhiteBoundsWholeImage(Bitmap b) // Remove's white boundary from image in an equal manner.
+        {
+            Bitmap newB = GrayScale(b);                                     // Applies grayscale 
+            Bitmap final = Binarization.ApplyStaticThreshold(newB, 200);    // Apply high threshold to define pure white from shadow
+            int bW = b.Width, bH = b.Height;
+            BitmapData bmd = final.LockBits(new Rectangle(0, 0, bW, bH), 
+                ImageLockMode.ReadOnly, PixelFormat.Format8bppIndexed); // working on same image and calculating pixels to be removed
+
+            int minX = bW - 1, minY = bH - 1, maxX = 0, maxY = 0; // keep changing
+
+            int offSet = bmd.Stride - bW;    // NON-CHANGING stride value.
+
+            unsafe
+            {  
+                byte* ptr = (byte*)bmd.Scan0.ToPointer();                        // First pixel from top-left corner of image
+                
+                for (int y = 0; y < bH; y++, ptr += offSet) 
+                {
+                    for (int x = 0; x < bW; x++, ptr++) 
+                    {
+                        if  (*ptr < 255) 
+                        {
+                            if (x < minX)
+                                minX = x;
+                            if (y < minY)
+                                minY = y;
+                            if (x > maxX)
+                                maxX = x;
+                            if (y > maxY)
+                                maxY = y;
+                        }
+                    }
+                }
+            }
+
+            final.UnlockBits(bmd);
+
+
+            return b.Clone(new Rectangle(minX, minY, maxX-minX+1, maxY-minY+1), b.PixelFormat);   
+
+        }   // Returns same Image cropped by exactly n rows and columns equally
+
+
         public static Bitmap RescaleGray(Bitmap b, double factor) // Changes image resolution by resizing/rescaling
         {
             Bitmap copy = GrayScale(b);
@@ -268,7 +309,7 @@ namespace SanadDiP
             return newB;
         }
 
-        public static Bitmap Rescale(Bitmap b, double factor) // Changes image resolution by resizing/rescaling
+        public static Bitmap Rescale(Bitmap b, double factor)     // Changes image resolution by resizing/rescaling
         {
             Bitmap copy = (Bitmap)b.Clone();
             copy.Palette = b.Palette;

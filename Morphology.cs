@@ -22,8 +22,9 @@ namespace SanadDiP
             int borderWidth = ((filterSize - 1) / 2);
             int bitmapWidth = b.Width, bitmapHeight = b.Height;
 
-            Bitmap newB = ImageAlteration.AddBorder(b, 0, borderWidth);         // adding black border to apply erosion
-            BitmapData bmd1 = newB.LockBits(new Rectangle(0, 0, bitmapWidth + (borderWidth*2), bitmapHeight + (borderWidth*2)),
+            Bitmap newB = ImageAlteration.GrayScale(b);
+            Bitmap gray = ImageAlteration.AddBorder(newB, 0, borderWidth);         // adding black border to apply erosion
+            BitmapData bmd1 = gray.LockBits(new Rectangle(0, 0, bitmapWidth + (borderWidth*2), bitmapHeight + (borderWidth*2)),
                 ImageLockMode.ReadOnly, PixelFormat.Format8bppIndexed);
 
             Bitmap final = new Bitmap(bitmapWidth, bitmapHeight, PixelFormat.Format8bppIndexed);
@@ -59,7 +60,7 @@ namespace SanadDiP
                 }
             }
             
-            newB.UnlockBits(bmd1);
+            gray.UnlockBits(bmd1);
             final.UnlockBits(bmd2);
             
 
@@ -71,8 +72,9 @@ namespace SanadDiP
             int borderWidth = ((filterSize - 1) / 2);       // used in bmp and bmd
             int bitmapWidth = b.Width, bitmapHeight = b.Height;
 
-            Bitmap newB = ImageAlteration.AddBorder(b, 255, borderWidth);       // adding white border to apply erosion
-            BitmapData bmd1 = newB.LockBits(new Rectangle(0, 0, bitmapWidth + (borderWidth*2), bitmapHeight + (borderWidth*2)),
+            Bitmap newB = ImageAlteration.GrayScale(b);
+            Bitmap gray = ImageAlteration.AddBorder(newB, 255, borderWidth);       // adding white border to apply erosion
+            BitmapData bmd1 = gray.LockBits(new Rectangle(0, 0, bitmapWidth + (borderWidth*2), bitmapHeight + (borderWidth*2)),
                 ImageLockMode.ReadOnly, PixelFormat.Format8bppIndexed);
             
             Bitmap final = new Bitmap(bitmapWidth, bitmapHeight, PixelFormat.Format8bppIndexed);
@@ -108,7 +110,7 @@ namespace SanadDiP
                 }
             }
             
-            newB.UnlockBits(bmd1);
+            gray.UnlockBits(bmd1);
             final.UnlockBits(bmd2); 
             
             return final;
