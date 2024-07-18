@@ -221,7 +221,7 @@ namespace SanadDiP
             int minX = bW - 1, minY = bH - 1, maxX = 0, maxY = 0; // keep changing
 
             int offSet = bmd.Stride - bW;    // NON-CHANGING stride value.
-
+            // Heres something that I should be implementing in all my functions it is how and when and where to comment because it is extremely helpful and great to have and be implemented.
             unsafe
             {  
                 byte* ptr = (byte*)bmd.Scan0.ToPointer();                        // First pixel from top-left corner of image

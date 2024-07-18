@@ -74,8 +74,6 @@ namespace SanadDiP
             return final;
         }
 
-        //implement not edge but contours
-
         // Takes binarized image
         public static List<List <Point>> FindContours(Bitmap b)
         {
@@ -99,47 +97,80 @@ namespace SanadDiP
                         if (*pixel < 128 && !visited[x, y])
                         {
                             List<Point> contour = new List<Point>();
-                            TraceOutline(pixel, stride, x, y, visited, contour, bW, bH);
+                            TraceOutline(bmd, stride, x, y, visited, contour, bW, bH);
                             contours.Add(contour);
                         }
                     }
                 }
             }
 
+            b.UnlockBits(bmd);
+
             return contours;
         }   
 
-        private static unsafe void TraceOutline(byte* ptr, int stride, int x, int y, bool [,] visited, List<Point> contour, int bW, int bH)
+        private static void TraceOutline(BitmapData bmd, int stride, int x, int y, bool [,] visited, List<Point> contour, int bW, int bH)
         {
             Stack<Point> stack = new Stack<Point>();
             stack.Push(new Point(x, y));
-            
-            while (stack.Count > 0)
+
+            // BitmapData bmd = b.LockBits(new Rectangle(0, 0, bW, bH), ImageLockMode.ReadOnly, PixelFormat.Format8bppIndexed);
+
+            unsafe
             {
-                Point p = stack.Pop();
-                int myX = p.X, myY = p.Y;
-                if (visited[myX, myY])
-                    continue;
-
-                visited[myX, myY] = true;
-                contour.Add(p);
-
-                for (int dy = -1; dy <= 1; dy++)
+                byte* ptr = (byte*)bmd.Scan0.ToPointer();
+                while (stack.Count > 0)
                 {
-                    for (int dx = -1; dx <= 1; dx++)
-                    {
-                        int newX = myX + dx;
-                        int newY = myY + dy;
+                    Point p = stack.Pop();
+                    int myX = p.X, myY = p.Y;
+                    if (visited[myX, myY])
+                        continue;
 
-                        if (newX >= 0 && newX < bW && newY >= 0 && newY < bH)
+                    visited[myX, myY] = true;
+                    contour.Add(p);
+
+                    for (int dy = -1; dy <= 1; dy++)
+                    {
+                        for (int dx = -1; dx <= 1; dx++)
                         {
-                            byte* pixel = ptr + (dy * stride) + dx;
-                            if (*pixel == 0 && !visited[newX, newY])
-                                stack.Push(new Point(newX, newY));
+                            int newX = myX + dx;
+                            int newY = myY + dy;
+
+                            if (newX >= 0 && newX < bW && newY >= 0 && newY < bH)
+                            {
+                                byte* pixel = ptr + (newY * stride) + newX;
+                                if (*pixel == 0 && !visited[newX, newY])
+                                    stack.Push(new Point(newX, newY));
+                            }
                         }
                     }
                 }
             }
+        }
+
+        public static Bitmap[] Split(Bitmap b, List<List <Point>> shapes)
+        {
+            int size = shapes.Count;
+            int bW = b.Width, bH = b.Height;
+            Bitmap [] splitShapes = new Bitmap[size];
+            for (int i = 0; i < size; i++)
+            {
+                int minX = bW, minY = bH, maxX = 0, maxY = 0;
+                foreach (Point p in shapes[i])
+                {
+                    int myX = p.X, myY = p.Y;
+                    if (myX > maxX)
+                        maxX = myX;
+                    else if (myX < minX)
+                        minX = myX;
+                    if (myY > maxY)
+                        maxY = myY;
+                    else if (myY < minY)
+                        minY = myY;
+                }
+                splitShapes[i] = (Bitmap)b.Clone(new Rectangle(minX-1, minY-1, maxX-minX+3, maxY-minY+3), PixelFormat.Format8bppIndexed);
+            }
+            return splitShapes;
         }
     }
 }

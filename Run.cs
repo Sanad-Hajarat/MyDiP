@@ -143,18 +143,19 @@ namespace SanadDiP
             b = Binarization.ApplyStaticThreshold(b, 127);
             b.Save("Images/Shapes2Binary.jpg", ImageFormat.Jpeg);
 
-            Bitmap b2 = Contours.Laplace(b);
-
-            List<Point> list = Extraction.allShapes(b2);
-            Console.WriteLine($"List Length = {list.Count}");
-
-
             List<List <Point>> listInList = Contours.FindContours(b);
             foreach (List<Point> lst in listInList)
             {
                 Console.WriteLine($"({lst[0].X}, {lst[0].Y})");
             }
             Console.WriteLine($"List Length = {listInList.Count}");
+
+            Bitmap[] b2 = Contours.Split(b, listInList);
+
+            for (int i = 0; i < b2.Length; i++)
+            {
+                b2[i].Save($"Shapes2Detected/Shape{i+1}.jpg", ImageFormat.Jpeg);
+            }
 
             // b = ImageAlteration.RemoveWhiteBounds(b);
             // b.Save("Images/Shapes2NoWhite.jpg", ImageFormat.Jpeg);
