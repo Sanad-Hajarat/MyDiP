@@ -151,9 +151,24 @@ namespace SanadDiP
 
             for (int i = 0; i < b2.Length; i++)
             {
-                b2[i].Save($"Shapes2Detected/Shape{i+1}.jpg", ImageFormat.Jpeg);
+                int corners = Shapes.CountCorners(listInList[i]);
+                int circle = 1, triangle = 1, square = 1, rectangle = 1;
+                double aspectRatio = b.Width / b.Height;
+
+                if (corners == 3)
+                    b2[i].Save($"Shapes2Try1/Triangle{triangle++}.jpg", ImageFormat.Jpeg);
+                else if (corners == 4 && aspectRatio >= 0.9 && aspectRatio <= 1.1)
+                    b2[i].Save($"Shapes2Try1/Square{square++}.jpg", ImageFormat.Jpeg);
+                else if (corners == 4)
+                    b2[i].Save($"Shapes2Try1/Rectangle{rectangle++}.jpg", ImageFormat.Jpeg);
+                else
+                    b2[i].Save($"Shapes2Try1/Circle{circle++}.jpg", ImageFormat.Jpeg);
+                
+                // b2[i].Save($"Shapes2Detected/Shape{i+1}.jpg", ImageFormat.Jpeg);
             }
             
+
+
             // foreach (Point x in listInList[0])
             // {
             //     Console.WriteLine($"({x.X}, {x.Y})");
