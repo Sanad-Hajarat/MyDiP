@@ -12,6 +12,7 @@ namespace SanadDiP
     
     public class Contours
     {
+        // really useless currently
         public static Bitmap Laplace(Bitmap b) 
         {
             int [,] kernel = new int [,] { {0, 1, 0}, {1, -4, 1}, {0, 1, 0} };
@@ -114,8 +115,6 @@ namespace SanadDiP
             Stack<Point> stack = new Stack<Point>();
             stack.Push(new Point(x, y));
 
-            // BitmapData bmd = b.LockBits(new Rectangle(0, 0, bW, bH), ImageLockMode.ReadOnly, PixelFormat.Format8bppIndexed);
-
             unsafe
             {
                 byte* ptr = (byte*)bmd.Scan0.ToPointer();
@@ -147,6 +146,7 @@ namespace SanadDiP
                 }
             }
         }
+
 
         public static Bitmap[] Split(Bitmap b, List<List <Point>> shapes)
         {
