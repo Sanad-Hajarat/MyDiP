@@ -10,7 +10,7 @@ namespace SanadDiP
     /// ProgressSoft Corporation
     /// </CREDITS>
     
-    public class Contours
+    public class Corners
     {
         // really useless currently
         public static Bitmap Laplace(Bitmap b) 
@@ -198,12 +198,105 @@ namespace SanadDiP
                 }
 
                 bm.UnlockBits(bmd);
-                
+
                 splitShapes[i] = bm;
 
                 //splitShapes[i] = (Bitmap)b.Clone(new Rectangle(minX-1, minY-1, maxX-minX+3, maxY-minY+3), PixelFormat.Format8bppIndexed);
             }
             return splitShapes;
+        }
+    
+        public static List<Point> DefineOneShape(Bitmap b)
+        {
+            List<Point> contour = new List<Point>();
+
+            Bitmap newB = ImageAlteration.RemoveWhiteBoundsWholeImage(b);
+            int bW = newB.Width, bH= newB.Height;
+            bool[,] visited = new bool[bW, bH];
+            BitmapData bmd = newB.LockBits(new Rectangle(0, 0, bW, bH), ImageLockMode.ReadOnly, PixelFormat.Format8bppIndexed);
+
+            int stride = bmd.Stride;
+            int offSet = stride - bW;
+            int [] yTraversal = new int[] {-1, 1, 0};
+
+            unsafe
+            {
+                byte* ptr = (byte*)bmd.Scan0.ToPointer();
+
+                Stack<Point> stack = new Stack<Point>();
+
+                for (int x = 0; x < bW; x++)
+                {
+                    if (*(ptr+x) == 0)
+                    {
+                        stack.Push(new Point(x, 0));
+                        break;
+                    }
+                }
+
+                while (stack.Count > 0)
+                {
+                    Point p = stack.Pop();
+                    int myX = p.X, myY = p.Y;
+                    if (visited[myX, myY])
+                        continue;
+
+                    visited[myX, myY] = true;
+                    contour.Add(p);
+
+                    for (int dy = 0; dy <= 2; dy++)
+                    {
+                        for (int dx = -1; dx <= 1; dx++)
+                        {
+                            int newX = myX + dx;
+                            int newY = myY + yTraversal[dy];
+
+                            if (newX >= 0 && newX < bW && newY >= 0 && newY < bH)
+                            {
+                                byte* pixel = ptr + (newY * stride) + newX;
+                                if (*pixel == 0 && !visited[newX, newY])
+                                    stack.Push(new Point(newX, newY));
+                            }
+                        }
+                    }
+                }
+            }
+
+            newB.UnlockBits(bmd);
+
+            return contour;
+        }
+
+        public static int Count(List<Point> contour, double thresholdAngle = Math.PI/2)
+        {
+            int corners = 1;
+            int count = contour.Count;
+
+            for (int i = 1; i < count - 1; i++)
+            {
+                Point prev = contour[i - 1];
+                Point current = contour[i];
+                Point next = contour[i + 1];
+
+                // double angle = Math.Abs(Math.Atan2(next.Y - current.Y, next.X - current.X) - Math.Atan2(prev.Y - current.Y, prev.X - current.X));
+                
+                double direction1 = Math.Abs(Math.Atan2(next.Y - current.Y, next.X - current.X));
+                double direction2 = Math.Abs(Math.Atan2(prev.Y - current.Y, prev.X - current.X));
+
+                double angle = Math.Abs(direction1 - direction2);
+
+                bool sameAngle = direction1 == direction2;
+    
+                // if (angle > Math.PI)
+                //     angle = angle % Math.PI;
+
+                // if (angle >= thresholdAngle)
+
+                if (!sameAngle && (angle >= Math.PI/6) && (angle <= Math.PI/1.8))
+                    corners++;
+            }
+
+            return corners;
         }
     }
 }

@@ -144,39 +144,38 @@ namespace SanadDiP
             b.Save("Images/Shapes2Binary.jpg", ImageFormat.Jpeg);
 
             sw.Restart();
-            List<List <Point>> listInList = Contours.FindContours(b);
-            Bitmap[] b2 = Contours.Split(b, listInList);
+            List<List <Point>> listInList = Corners.FindContours(b);
+            Bitmap[] b2 = Corners.Split(b, listInList);
             sw.Stop();
             Console.WriteLine($"Shapes Detected = {listInList.Count} | Time taken: {sw.ElapsedMilliseconds}ms\n");
 
+            sw.Restart();
+
+            int circle = 1, triangle = 1, square = 1, rectangle = 1;
             for (int i = 0; i < b2.Length; i++)
             {
-                // int corners = Shapes.CountCorners(listInList[i]);
-                // int circle = 1, triangle = 1, square = 1, rectangle = 1;
-                // double aspectRatio = b.Width / b.Height;
-
-                // if (corners == 3)
-                //     b2[i].Save($"Shapes2Try1/Triangle{triangle++}.jpg", ImageFormat.Jpeg);
-                // else if (corners == 4 && aspectRatio >= 0.9 && aspectRatio <= 1.1)
-                //     b2[i].Save($"Shapes2Try1/Square{square++}.jpg", ImageFormat.Jpeg);
-                // else if (corners == 4)
-                //     b2[i].Save($"Shapes2Try1/Rectangle{rectangle++}.jpg", ImageFormat.Jpeg);
-                // else
-                //     b2[i].Save($"Shapes2Try1/Circle{circle++}.jpg", ImageFormat.Jpeg);
-                
                 b2[i].Save($"Shapes2Detected/Shape{i+1}.jpg", ImageFormat.Jpeg);
+
+                Bitmap myB = ImageAlteration.Invert(Corners.Laplace(b2[i]));
+                List<Point> outline = Corners.DefineOneShape(myB);
+
+                int corners = Corners.Count(outline);
+                Console.WriteLine($"Shape {i+1} has {corners} corners with {outline.Count} points.\n");
+                double aspectRatio = myB.Width / myB.Height;
+                if (corners == 3)
+                    b2[i].Save($"Shapes2Final/Triangle{triangle++}.jpg", ImageFormat.Jpeg);
+                else if (corners == 4 && aspectRatio >= 0.95 && aspectRatio <= 1.05)
+                    b2[i].Save($"Shapes2Final/Square{square++}.jpg", ImageFormat.Jpeg);
+                else if (corners == 4)
+                    b2[i].Save($"Shapes2Final/Rectangle{rectangle++}.jpg", ImageFormat.Jpeg);
+                else
+                    b2[i].Save($"Shapes2Final/Circle{circle++}.jpg", ImageFormat.Jpeg);
+                
+                myB.Save($"Shapes2Laplace/Shape{i+1}.jpg", ImageFormat.Jpeg);
             }
             
-
-
-            // foreach (Point x in listInList[0])
-            // {
-            //     Console.WriteLine($"({x.X}, {x.Y})");
-            // }
-
-
-            // b = ImageAlteration.RemoveWhiteBounds(b);
-            // b.Save("Images/Shapes2NoWhite.jpg", ImageFormat.Jpeg);
+            sw.Stop();
+            Console.WriteLine($"\nTime taken for saving all shapes: {sw.ElapsedMilliseconds}ms\n");
 
         }  
     }

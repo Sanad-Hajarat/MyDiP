@@ -72,6 +72,29 @@ namespace SanadDiP
             return grayBitmap;
         }
 
+        public static Bitmap Invert(Bitmap b)
+        {
+            Bitmap newB = (Bitmap)b.Clone();
+            int bW = newB.Width, bH = newB.Height;
+
+            BitmapData bmd =  newB.LockBits(new Rectangle(0, 0, bW, bH), ImageLockMode.ReadWrite, PixelFormat.Format8bppIndexed);
+            
+            int offSet = bmd.Stride - bW;
+
+            unsafe
+            {
+                byte* pixel = (byte*)bmd.Scan0.ToPointer();
+
+                for (int y = 0; y < bH; y++, pixel += offSet)
+                    for (int x = 0; x < bW; x++, pixel++)
+                        *pixel = (byte)(255 - *pixel);
+            }
+
+            newB.UnlockBits(bmd);
+
+            return newB;
+        }
+
         public static Bitmap AddBorder(Bitmap b, byte color, int borderWidth)    // Adds border of certain color. Helps with dilation and erosion.
         {
             int bitmapWidth = b.Width, bitmapHeight = b.Height, bW2 = bitmapWidth + (borderWidth*2), bH2 = bitmapHeight + (borderWidth*2); // define new width and height for bordered image.

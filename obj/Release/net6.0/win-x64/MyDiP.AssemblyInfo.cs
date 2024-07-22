@@ -13,7 +13,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("MyDiP")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Release")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+63da6caeb3431f5115fc2221dca048ce477cfd5c")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+3298669adf4d42cbf132cff3d9d12b5d501e07bb")]
 [assembly: System.Reflection.AssemblyProductAttribute("MyDiP")]
 [assembly: System.Reflection.AssemblyTitleAttribute("MyDiP")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]
