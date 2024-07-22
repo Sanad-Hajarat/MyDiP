@@ -168,7 +168,40 @@ namespace SanadDiP
                     else if (myY < minY)
                         minY = myY;
                 }
-                splitShapes[i] = (Bitmap)b.Clone(new Rectangle(minX-1, minY-1, maxX-minX+3, maxY-minY+3), PixelFormat.Format8bppIndexed);
+
+                int width = maxX-minX+3, height = maxY-minY+3;
+                Bitmap bm = new Bitmap(width, height, PixelFormat.Format8bppIndexed);
+                BitmapData bmd = bm.LockBits(new Rectangle(0, 0, width, height), ImageLockMode.ReadWrite, PixelFormat.Format8bppIndexed);
+
+                int stride = bmd.Stride;
+                int offSet = stride - width;
+
+                unsafe
+                {
+                    byte* ptr = (byte*)bmd.Scan0.ToPointer() + 1 + stride;
+
+                    foreach (Point p in shapes[i])
+                    {
+                        int myX = p.X, myY = p.Y;
+                        *(ptr + myX-minX + ((myY-minY)*stride)) = 255;
+                    }
+
+                    // inverting after
+                    ptr = ptr - stride - 1;
+                    for (int y = 0; y < height; y++, ptr += offSet)
+                    {
+                        for (int x = 0; x < width; x++, ptr++)
+                        {
+                            *ptr = (byte)(255 - *ptr);
+                        }
+                    }
+                }
+
+                bm.UnlockBits(bmd);
+                
+                splitShapes[i] = bm;
+
+                //splitShapes[i] = (Bitmap)b.Clone(new Rectangle(minX-1, minY-1, maxX-minX+3, maxY-minY+3), PixelFormat.Format8bppIndexed);
             }
             return splitShapes;
         }
