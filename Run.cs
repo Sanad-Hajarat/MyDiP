@@ -164,7 +164,7 @@ namespace SanadDiP
                 double aspectRatio = myB.Width / myB.Height;
                 if (corners == 3)
                     b2[i].Save($"Shapes2Final/Triangle{triangle++}.jpg", ImageFormat.Jpeg);
-                else if (corners == 4 && aspectRatio >= 0.95 && aspectRatio <= 1.05)
+                else if (corners == 4 && (aspectRatio >= 0.95 && aspectRatio <= 1.05))
                     b2[i].Save($"Shapes2Final/Square{square++}.jpg", ImageFormat.Jpeg);
                 else if (corners == 4)
                     b2[i].Save($"Shapes2Final/Rectangle{rectangle++}.jpg", ImageFormat.Jpeg);

@@ -269,34 +269,75 @@ namespace SanadDiP
 
         public static int Count(List<Point> contour, double thresholdAngle = Math.PI/2)
         {
-            int corners = 1;
+            // int corners = 1;
+            // int count = contour.Count;
+
+            // for (int i = 1; i < count - 1; i++)
+            // {
+            //     Point prev = contour[i - 1];
+            //     Point current = contour[i];
+            //     Point next = contour[i + 1];
+
+            //     // double angle = Math.Abs(Math.Atan2(next.Y - current.Y, next.X - current.X) - Math.Atan2(prev.Y - current.Y, prev.X - current.X));
+                
+            //     double direction1 = Math.Abs(Math.Atan2(next.Y - current.Y, next.X - current.X));
+            //     double direction2 = Math.Abs(Math.Atan2(current.Y - prev.Y, current.X - prev.X));
+
+            //     double angle = Math.Abs(direction1 - direction2);
+
+            //     bool sameAngle = direction1 == direction2;
+    
+            //     // if (angle > Math.PI)
+            //     //     angle = angle % Math.PI;
+
+            //     // if (angle >= thresholdAngle)
+
+            //     if (!sameAngle && (angle > Math.PI/6) && (angle < Math.PI - Math.PI/6))
+            //         corners++;
+            // }
+
+            // return corners;
+            int corners = 0;
             int count = contour.Count;
 
-            for (int i = 1; i < count - 1; i++)
+            for (int i = 0; i < count - 1; i++)
             {
-                Point prev = contour[i - 1];
+                Point prev = contour[(i - 1 + count) % count];
                 Point current = contour[i];
-                Point next = contour[i + 1];
+                Point next = contour[(i + 1 + count) % count];
 
-                // double angle = Math.Abs(Math.Atan2(next.Y - current.Y, next.X - current.X) - Math.Atan2(prev.Y - current.Y, prev.X - current.X));
-                
-                double direction1 = Math.Abs(Math.Atan2(next.Y - current.Y, next.X - current.X));
-                double direction2 = Math.Abs(Math.Atan2(prev.Y - current.Y, prev.X - current.X));
+                double angle = CalculateAngle(prev, current, next);
 
-                double angle = Math.Abs(direction1 - direction2);
-
-                bool sameAngle = direction1 == direction2;
-    
-                // if (angle > Math.PI)
-                //     angle = angle % Math.PI;
-
-                // if (angle >= thresholdAngle)
-
-                if (!sameAngle && (angle >= Math.PI/6) && (angle <= Math.PI/1.8))
+                if (!(angle < thresholdAngle || angle > (Math.PI - thresholdAngle)))
+                {
                     corners++;
+                    Console.WriteLine($"Corner at: ({contour[i].X}, {contour[i].Y})");
+                }
             }
 
             return corners;
+        }
+
+        private static double CalculateAngle(Point A, Point B, Point C)
+        {
+            double BAx = A.X - B.X;
+            double BAy = A.Y - B.Y;
+
+            double BCx = C.X - B.X;
+            double BCy = C.Y - B.Y;
+
+            double dotProduct = BAx * BCx + BAy * BCy;
+            double magnitudeBA = Math.Sqrt(BAx * BAx + BAy * BAy);
+            double magnitudeBC = Math.Sqrt(BCx * BCx + BCy * BCy);
+
+            double cosTheta = dotProduct / (magnitudeBA * magnitudeBC);
+
+            // Clamp the cosine value to the [-1, 1] range to avoid precision errors
+            cosTheta = Math.Max(-1.0, Math.Min(1.0, cosTheta));
+
+            double angle = Math.Acos(cosTheta);
+
+            return angle;
         }
     }
 }
