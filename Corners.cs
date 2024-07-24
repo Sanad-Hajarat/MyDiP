@@ -98,7 +98,7 @@ namespace SanadDiP
                         if (*pixel < 128 && !visited[x, y])
                         {
                             List<Point> component = new List<Point>();
-                            TraceShape(bmd, stride, x, y, visited, component, bW, bH);
+                            TraceOutline(bmd, stride, x, y, visited, component, bW, bH);
                             components.Add(component);
                         }
                     }
@@ -110,7 +110,7 @@ namespace SanadDiP
             return components;
         }   
 
-        private static void TraceShape(BitmapData bmd, int stride, int x, int y, bool [,] visited, List<Point> component, int bW, int bH)
+        private static void TraceOutline(BitmapData bmd, int stride, int x, int y, bool [,] visited, List<Point> component, int bW, int bH)
         {
             Stack<Point> stack = new Stack<Point>();
             stack.Push(new Point(x, y));
@@ -161,11 +161,11 @@ namespace SanadDiP
                     int myX = p.X, myY = p.Y;
                     if (myX > maxX)
                         maxX = myX;
-                    else if (myX < minX)
+                    if (myX < minX)
                         minX = myX;
                     if (myY > maxY)
                         maxY = myY;
-                    else if (myY < minY)
+                    if (myY < minY)
                         minY = myY;
                 }
 
@@ -200,15 +200,13 @@ namespace SanadDiP
                 bm.UnlockBits(bmd);
 
                 splitShapes[i] = bm;
-
-                //splitShapes[i] = (Bitmap)b.Clone(new Rectangle(minX-1, minY-1, maxX-minX+3, maxY-minY+3), PixelFormat.Format8bppIndexed);
             }
             return splitShapes;
         }
     
         public static List<Point> DefineOneShape(Bitmap b)
         {
-            List<Point> contour = new List<Point>();
+            List<Point> component = new List<Point>();
 
             Bitmap newB = ImageAlteration.RemoveWhiteBoundsWholeImage(b);
             int bW = newB.Width, bH= newB.Height;
@@ -242,7 +240,7 @@ namespace SanadDiP
                         continue;
 
                     visited[myX, myY] = true;
-                    contour.Add(p);
+                    component.Add(p);
 
                     for (int dy = 0; dy <= 2; dy++)
                     {
@@ -264,7 +262,7 @@ namespace SanadDiP
 
             newB.UnlockBits(bmd);
 
-            return contour;
+            return component;
         }
 
         public static int Count(List<Point> contour, double thresholdAngle = 0.2)
@@ -283,7 +281,7 @@ namespace SanadDiP
                 if (!(angle < thresholdAngle || angle > (Math.PI - thresholdAngle)))
                 {
                     corners++;
-                    Console.WriteLine($"Corner at: ({contour[i].X}, {contour[i].Y})");
+                    // Console.WriteLine($"Corner at: ({contour[i].X}, {contour[i].Y})");
                 }
             }
 
