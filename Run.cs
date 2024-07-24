@@ -144,7 +144,7 @@ namespace SanadDiP
             b.Save("Images/Shapes2Binary.jpg", ImageFormat.Jpeg);
 
             sw.Restart();
-            List<List <Point>> listInList = Corners.FindContours(b);
+            List<List <Point>> listInList = Corners.FindConnectedComponents(b);
             Bitmap[] b2 = Corners.Split(b, listInList);
             sw.Stop();
             Console.WriteLine($"Shapes Detected = {listInList.Count} | Time taken: {sw.ElapsedMilliseconds}ms\n");

@@ -76,9 +76,9 @@ namespace SanadDiP
         }
 
         // Takes binarized image
-        public static List<List <Point>> FindContours(Bitmap b)
+        public static List<List <Point>> FindConnectedComponents(Bitmap b)
         {
-            List<List<Point>> contours = new List<List<Point>>();
+            List<List<Point>> components = new List<List<Point>>();
             int bW = b.Width, bH = b.Height;
 
             bool[,] visited = new bool[bW, bH];
@@ -97,9 +97,9 @@ namespace SanadDiP
                     {
                         if (*pixel < 128 && !visited[x, y])
                         {
-                            List<Point> contour = new List<Point>();
-                            TraceOutline(bmd, stride, x, y, visited, contour, bW, bH);
-                            contours.Add(contour);
+                            List<Point> component = new List<Point>();
+                            TraceShape(bmd, stride, x, y, visited, component, bW, bH);
+                            components.Add(component);
                         }
                     }
                 }
@@ -107,10 +107,10 @@ namespace SanadDiP
 
             b.UnlockBits(bmd);
 
-            return contours;
+            return components;
         }   
 
-        private static void TraceOutline(BitmapData bmd, int stride, int x, int y, bool [,] visited, List<Point> contour, int bW, int bH)
+        private static void TraceShape(BitmapData bmd, int stride, int x, int y, bool [,] visited, List<Point> component, int bW, int bH)
         {
             Stack<Point> stack = new Stack<Point>();
             stack.Push(new Point(x, y));
@@ -126,7 +126,7 @@ namespace SanadDiP
                         continue;
 
                     visited[myX, myY] = true;
-                    contour.Add(p);
+                    component.Add(p);
 
                     for (int dy = -1; dy <= 1; dy++)
                     {
@@ -267,36 +267,8 @@ namespace SanadDiP
             return contour;
         }
 
-        public static int Count(List<Point> contour, double thresholdAngle = Math.PI/2)
+        public static int Count(List<Point> contour, double thresholdAngle = 0.2)
         {
-            // int corners = 1;
-            // int count = contour.Count;
-
-            // for (int i = 1; i < count - 1; i++)
-            // {
-            //     Point prev = contour[i - 1];
-            //     Point current = contour[i];
-            //     Point next = contour[i + 1];
-
-            //     // double angle = Math.Abs(Math.Atan2(next.Y - current.Y, next.X - current.X) - Math.Atan2(prev.Y - current.Y, prev.X - current.X));
-                
-            //     double direction1 = Math.Abs(Math.Atan2(next.Y - current.Y, next.X - current.X));
-            //     double direction2 = Math.Abs(Math.Atan2(current.Y - prev.Y, current.X - prev.X));
-
-            //     double angle = Math.Abs(direction1 - direction2);
-
-            //     bool sameAngle = direction1 == direction2;
-    
-            //     // if (angle > Math.PI)
-            //     //     angle = angle % Math.PI;
-
-            //     // if (angle >= thresholdAngle)
-
-            //     if (!sameAngle && (angle > Math.PI/6) && (angle < Math.PI - Math.PI/6))
-            //         corners++;
-            // }
-
-            // return corners;
             int corners = 0;
             int count = contour.Count;
 
@@ -304,7 +276,7 @@ namespace SanadDiP
             {
                 Point prev = contour[(i - 1 + count) % count];
                 Point current = contour[i];
-                Point next = contour[(i + 1 + count) % count];
+                Point next = contour[(i + 1) % count];
 
                 double angle = CalculateAngle(prev, current, next);
 

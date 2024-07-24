@@ -295,7 +295,10 @@ namespace SanadDiP
             int strideOriginal = original.Stride;
             int offSetRescaled = rescaled.Stride - rescaledW;
 
-            double stepX = 1.0/factor, stepY = 1.0/factor;
+            /// step
+            double xyz = 1.0/factor;
+
+            double stepX = xyz, stepY = xyz;
 
             unsafe
             {
@@ -311,18 +314,18 @@ namespace SanadDiP
                         if (stepX >= 1)
                         {
                             rowPtr += (int) stepX;
-                            stepX = 1.0/factor;
+                            stepX = xyz;
                         }
                         else
-                            stepX += 1.0/factor;
+                            stepX += xyz;
                     }
                     if (stepY >= 1)
                     {
                         originalPixel += (int) stepY * strideOriginal;
-                        stepY = 1.0/factor;
+                        stepY = xyz;
                     }
                     else
-                        stepY += 1.0/factor;
+                        stepY += xyz;
                 }
             }
             
