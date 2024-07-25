@@ -81,6 +81,7 @@ namespace SanadDiP
             List<List<Point>> components = new List<List<Point>>();
             int bW = b.Width, bH = b.Height;
 
+            // boolean 2D array of size of the image. Tracks which pixels have been visited.
             bool[,] visited = new bool[bW, bH];
             BitmapData bmd = b.LockBits(new Rectangle(0, 0, bW, bH), ImageLockMode.ReadOnly, PixelFormat.Format8bppIndexed);
 
@@ -97,8 +98,11 @@ namespace SanadDiP
                     {
                         if (*pixel < 128 && !visited[x, y])
                         {
+                            // New shape created called component which comes in the form of a list of points.
                             List<Point> component = new List<Point>();
                             TraceOutline(bmd, stride, x, y, visited, component, bW, bH);
+
+                            // components.Count = total number of shapes
                             components.Add(component);
                         }
                     }
@@ -112,6 +116,7 @@ namespace SanadDiP
 
         private static void TraceOutline(BitmapData bmd, int stride, int x, int y, bool [,] visited, List<Point> component, int bW, int bH)
         {
+            // All of the points being tracked that are directly neighbors.
             Stack<Point> stack = new Stack<Point>();
             stack.Push(new Point(x, y));
 
@@ -122,12 +127,15 @@ namespace SanadDiP
                 {
                     Point p = stack.Pop();
                     int myX = p.X, myY = p.Y;
+                    
+                    // skip the point if we visited it.
                     if (visited[myX, myY])
                         continue;
 
                     visited[myX, myY] = true;
                     component.Add(p);
 
+                    // goes through 8-neighbors to find whole shape
                     for (int dy = -1; dy <= 1; dy++)
                     {
                         for (int dx = -1; dx <= 1; dx++)
@@ -150,11 +158,14 @@ namespace SanadDiP
 
         public static Bitmap[] Split(Bitmap b, List<List <Point>> shapes)
         {
+            // makes an array of bitmaps depending on number of shapes.
             int size = shapes.Count;
             int bW = b.Width, bH = b.Height;
             Bitmap [] splitShapes = new Bitmap[size];
+
             for (int i = 0; i < size; i++)
             {
+                // searches for minX, minY, maxX, maxY to find the Width and Height of the shapes.
                 int minX = bW, minY = bH, maxX = 0, maxY = 0;
                 foreach (Point p in shapes[i])
                 {
@@ -168,7 +179,8 @@ namespace SanadDiP
                     if (myY < minY)
                         minY = myY;
                 }
-
+                
+                // Adding a padding to make it easier to show them in the images.
                 int width = maxX-minX+3, height = maxY-minY+3;
                 Bitmap bm = new Bitmap(width, height, PixelFormat.Format8bppIndexed);
                 BitmapData bmd = bm.LockBits(new Rectangle(0, 0, width, height), ImageLockMode.ReadWrite, PixelFormat.Format8bppIndexed);
@@ -183,10 +195,11 @@ namespace SanadDiP
                     foreach (Point p in shapes[i])
                     {
                         int myX = p.X, myY = p.Y;
+                        // Setting pixels in the right coordinates.
                         *(ptr + myX-minX + ((myY-minY)*stride)) = 255;
                     }
 
-                    // inverting after
+                    // inverting after.
                     ptr = ptr - stride - 1;
                     for (int y = 0; y < height; y++, ptr += offSet)
                     {
@@ -206,6 +219,7 @@ namespace SanadDiP
     
         public static List<Point> DefineOneShape(Bitmap b)
         {
+            // Draws the shape in one image disregarding near shapes.
             List<Point> component = new List<Point>();
 
             Bitmap newB = ImageAlteration.RemoveWhiteBoundsWholeImage(b);
@@ -215,6 +229,8 @@ namespace SanadDiP
 
             int stride = bmd.Stride;
             int offSet = stride - bW;
+
+            // traverses image to find directly bottom or above pixel instead of going diagonal first.
             int [] yTraversal = new int[] {-1, 1, 0};
 
             unsafe
@@ -267,6 +283,7 @@ namespace SanadDiP
 
         public static int CalculateUniqueSlopes(List<Point> points)
         {
+            // HashSet to prevent duplicates
             HashSet<double> slopes = new HashSet<double>();
 
             for (int i = 1; i < points.Count-3; i++)
@@ -278,6 +295,7 @@ namespace SanadDiP
                 double slope13 = CalculateSlope(p1, p3);
                 double slope35 = CalculateSlope(p3, p5);
 
+                // If slope between 5 points is similar it means it's an edge of a shape. (measuring edges not corners)
                 if (slope13 == slope35)
                     slopes.Add(slope13);
             }
@@ -316,7 +334,6 @@ namespace SanadDiP
 
                 int numOfSlopes = CalculateUniqueSlopes(outline);
         
-                // Console.WriteLine($"Shape {i+1} has {numOfSlopes} unique slopes with {outline.Count} points.\n");
                 double aspectRatio = (double)myB.Width / myB.Height;
                 if (numOfSlopes == 3)
                     b2[i].Save($"ShapeDetection/Shapes{dir}Final/Triangle{triangle++}.jpg", ImageFormat.Jpeg);
