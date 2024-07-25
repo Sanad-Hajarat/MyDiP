@@ -269,21 +269,17 @@ namespace SanadDiP
         {
             HashSet<double> slopes = new HashSet<double>();
 
-            for (int i = 1; i < points.Count-2; i++)
+            for (int i = 1; i < points.Count-3; i++)
             {
-                Point p1 = points[i-1];
-                Point p2 = points[i];
+                Point p1 = points[(i - 1) % points.Count];
                 Point p3 = points[(i + 1) % points.Count];
-                Point p4 = points[(i + 2) % points.Count];
+                Point p5 = points[(i + 3) % points.Count];
 
-                double slope12 = CalculateSlope(p1, p2);
-                double slope23 = CalculateSlope(p2, p3);
-                double slope34 = CalculateSlope(p3, p4);
                 double slope13 = CalculateSlope(p1, p3);
-                double slope24 = CalculateSlope(p2, p4);
+                double slope35 = CalculateSlope(p3, p5);
 
-                if (slope12 == slope23 && slope12 == slope34 && slope13 == slope24)
-                    slopes.Add(slope12);
+                if (slope13 == slope35)
+                    slopes.Add(slope13);
             }
 
             return slopes;
