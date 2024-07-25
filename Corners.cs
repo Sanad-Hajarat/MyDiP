@@ -276,12 +276,14 @@ namespace SanadDiP
                 Point p3 = points[(i + 1) % points.Count];
                 Point p4 = points[(i + 2) % points.Count];
 
-                double slope1 = CalculateSlope(p1, p2);
-                double slope2 = CalculateSlope(p2, p3);
-                double slope3 = CalculateSlope(p3, p4);
+                double slope12 = CalculateSlope(p1, p2);
+                double slope23 = CalculateSlope(p2, p3);
+                double slope34 = CalculateSlope(p3, p4);
+                double slope13 = CalculateSlope(p1, p3);
+                double slope24 = CalculateSlope(p2, p4);
 
-                if ((slope1 == slope2 && slope1 == slope3) || (slope1 == slope3 && slope1 != slope2))
-                    slopes.Add(slope1);
+                if (slope12 == slope23 && slope12 == slope34 && slope13 == slope24)
+                    slopes.Add(slope12);
             }
 
             return slopes;
@@ -297,6 +299,39 @@ namespace SanadDiP
 
             return dy / dx;
         }
-        
+
+        public static void ClassifyShapes(Bitmap b, int dir)
+        {
+            Bitmap newB = ImageAlteration.GrayScale(b);
+            newB = Binarization.ApplyStaticThreshold(b, 127);
+
+            List<List <Point>> listInList = FindConnectedComponents(newB);
+            Bitmap[] b2 = Split(newB, listInList);
+
+            Console.WriteLine($"Shapes Detected = {listInList.Count}");
+
+            int circle = 1, triangle = 1, square = 1, rectangle = 1;
+            for (int i = 0; i < b2.Length; i++)
+            {
+                b2[i].Save($"ShapeDetection/Shapes{dir}Detected/Shape{i+1}.jpg", ImageFormat.Jpeg);
+
+                Bitmap myB = ImageAlteration.Invert(Laplace(b2[i]));
+                List<Point> outline = DefineOneShape(myB);
+
+                HashSet<double> slopes = CalculateUniqueSlopes(outline);
+                int numOfSlopes = slopes.Count;
+                // Console.WriteLine($"Shape {i+1} has {numOfSlopes} unique slopes with {outline.Count} points.\n");
+                double aspectRatio = (double)myB.Width / myB.Height;
+                if (numOfSlopes == 3)
+                    b2[i].Save($"ShapeDetection/Shapes{dir}Final/Triangle{triangle++}.jpg", ImageFormat.Jpeg);
+                else if (numOfSlopes == 2 && (aspectRatio >= 0.95 && aspectRatio <= 1.05))
+                    b2[i].Save($"ShapeDetection/Shapes{dir}Final/Square{square++}.jpg", ImageFormat.Jpeg);
+                else if (numOfSlopes == 2)
+                    b2[i].Save($"ShapeDetection/Shapes{dir}Final/Rectangle{rectangle++}.jpg", ImageFormat.Jpeg);
+                else
+                    b2[i].Save($"ShapeDetection/Shapes{dir}Final/Circle{circle++}.jpg", ImageFormat.Jpeg);
+            }
+        }
+
     }
 }

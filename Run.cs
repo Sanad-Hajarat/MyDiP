@@ -137,47 +137,20 @@ namespace SanadDiP
             // Best image is using Laplace.
 
             Bitmap b = new Bitmap(address + "/Milestone-examples/ShapeDetectionTest.png");
-            Console.WriteLine($"Width: {b.Width}, Height: {b.Height}");
-
-            b = ImageAlteration.GrayScale(b);
-            b = Binarization.ApplyStaticThreshold(b, 127);
-            b.Save("Images/Shapes1Binary.jpg", ImageFormat.Jpeg);
-
-            sw.Restart();
-            List<List <Point>> listInList = Corners.FindConnectedComponents(b);
-            Bitmap[] b2 = Corners.Split(b, listInList);
-            sw.Stop();
-            Console.WriteLine($"Shapes Detected = {listInList.Count} | Time taken: {sw.ElapsedMilliseconds}ms\n");
-
-            sw.Restart();
-
-            int circle = 1, triangle = 1, square = 1, rectangle = 1;
-            for (int i = 0; i < b2.Length; i++)
-            {
-                b2[i].Save($"Shapes1Detected/Shape{i+1}.jpg", ImageFormat.Jpeg);
-
-                Bitmap myB = ImageAlteration.Invert(Corners.Laplace(b2[i]));
-                List<Point> outline = Corners.DefineOneShape(myB);
-
-                HashSet<double> slopes = Corners.CalculateUniqueSlopes(outline);
-                int numOfSlopes = slopes.Count;
-                Console.WriteLine($"Shape {i+1} has {numOfSlopes} unique slopes with {outline.Count} points.\n");
-                double aspectRatio = (double)myB.Width / myB.Height;
-                if (numOfSlopes == 3)
-                    b2[i].Save($"Shapes1Final/Triangle{triangle++}.jpg", ImageFormat.Jpeg);
-                else if (numOfSlopes == 2 && (aspectRatio >= 0.95 && aspectRatio <= 1.05))
-                    b2[i].Save($"Shapes1Final/Square{square++}.jpg", ImageFormat.Jpeg);
-                else if (numOfSlopes == 2)
-                    b2[i].Save($"Shapes1Final/Rectangle{rectangle++}.jpg", ImageFormat.Jpeg);
-                else
-                    b2[i].Save($"Shapes1Final/Circle{circle++}.jpg", ImageFormat.Jpeg);
-                
-                myB.Save($"Shapes1Laplace/Shape{i+1}.jpg", ImageFormat.Jpeg);
-            }
             
+            sw.Restart();
+            Corners.ClassifyShapes(b, 1);
             sw.Stop();
+
             Console.WriteLine($"\nTime taken for saving all shapes: {sw.ElapsedMilliseconds}ms\n");
 
+            b = new Bitmap(address + "/Milestone-examples/ShapeDetectionTest2.png");
+
+            sw.Restart();
+            Corners.ClassifyShapes(b, 2);
+            sw.Stop();
+
+            Console.WriteLine($"\nTime taken for saving all shapes: {sw.ElapsedMilliseconds}ms\n");
         }  
     }
 }
