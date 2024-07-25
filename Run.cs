@@ -151,6 +151,19 @@ namespace SanadDiP
             sw.Stop();
 
             Console.WriteLine($"\nTime taken for saving all shapes: {sw.ElapsedMilliseconds}ms\n");
+
+            b = new Bitmap(address + "/Milestone-examples/MyShapes.png");
+            b.Save("ShapeDetection/Shapes3.jpg", ImageFormat.Jpeg);
+            b = ImageAlteration.GrayScale(b);
+            b.Save("ShapeDetection/Shapes3Gray.jpg", ImageFormat.Jpeg);
+            b = Binarization.ApplyStaticThreshold(b, 250);
+            b.Save("ShapeDetection/Shapes3Binary.jpg", ImageFormat.Jpeg);
+
+            sw.Restart();
+            Corners.ClassifyShapes(b, 3);
+            sw.Stop();
+
+            Console.WriteLine($"\nTime taken for saving all shapes: {sw.ElapsedMilliseconds}ms\n");
         }  
     }
 }

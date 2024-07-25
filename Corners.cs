@@ -209,7 +209,7 @@ namespace SanadDiP
             List<Point> component = new List<Point>();
 
             Bitmap newB = ImageAlteration.RemoveWhiteBoundsWholeImage(b);
-            int bW = newB.Width, bH= newB.Height;
+            int bW = newB.Width, bH = newB.Height;
             bool[,] visited = new bool[bW, bH];
             BitmapData bmd = newB.LockBits(new Rectangle(0, 0, bW, bH), ImageLockMode.ReadOnly, PixelFormat.Format8bppIndexed);
 
@@ -265,7 +265,7 @@ namespace SanadDiP
             return component;
         }
 
-        public static HashSet<double> CalculateUniqueSlopes(List<Point> points)
+        public static int CalculateUniqueSlopes(List<Point> points)
         {
             HashSet<double> slopes = new HashSet<double>();
 
@@ -282,7 +282,7 @@ namespace SanadDiP
                     slopes.Add(slope13);
             }
 
-            return slopes;
+            return slopes.Count;
         }
 
         private static double CalculateSlope(Point p1, Point p2) 
@@ -314,8 +314,8 @@ namespace SanadDiP
                 Bitmap myB = ImageAlteration.Invert(Laplace(b2[i]));
                 List<Point> outline = DefineOneShape(myB);
 
-                HashSet<double> slopes = CalculateUniqueSlopes(outline);
-                int numOfSlopes = slopes.Count;
+                int numOfSlopes = CalculateUniqueSlopes(outline);
+        
                 // Console.WriteLine($"Shape {i+1} has {numOfSlopes} unique slopes with {outline.Count} points.\n");
                 double aspectRatio = (double)myB.Width / myB.Height;
                 if (numOfSlopes == 3)
