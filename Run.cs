@@ -136,12 +136,12 @@ namespace SanadDiP
             
             // Best image is using Laplace.
 
-            Bitmap b = new Bitmap(address + "/Milestone-examples/ShapeDetectionTest2.png");
+            Bitmap b = new Bitmap(address + "/Milestone-examples/ShapeDetectionTest.png");
             Console.WriteLine($"Width: {b.Width}, Height: {b.Height}");
 
             b = ImageAlteration.GrayScale(b);
             b = Binarization.ApplyStaticThreshold(b, 127);
-            b.Save("Images/Shapes2Binary.jpg", ImageFormat.Jpeg);
+            b.Save("Images/Shapes1Binary.jpg", ImageFormat.Jpeg);
 
             sw.Restart();
             List<List <Point>> listInList = Corners.FindConnectedComponents(b);
@@ -154,24 +154,25 @@ namespace SanadDiP
             int circle = 1, triangle = 1, square = 1, rectangle = 1;
             for (int i = 0; i < b2.Length; i++)
             {
-                b2[i].Save($"Shapes2Detected/Shape{i+1}.jpg", ImageFormat.Jpeg);
+                b2[i].Save($"Shapes1Detected/Shape{i+1}.jpg", ImageFormat.Jpeg);
 
                 Bitmap myB = ImageAlteration.Invert(Corners.Laplace(b2[i]));
                 List<Point> outline = Corners.DefineOneShape(myB);
 
-                int corners = Corners.Count(outline);
-                Console.WriteLine($"Shape {i+1} has {corners} corners with {outline.Count} points.\n");
-                double aspectRatio = myB.Width / myB.Height;
-                if (corners == 3)
-                    b2[i].Save($"Shapes2Final/Triangle{triangle++}.jpg", ImageFormat.Jpeg);
-                else if (corners == 4 && (aspectRatio >= 0.95 && aspectRatio <= 1.05))
-                    b2[i].Save($"Shapes2Final/Square{square++}.jpg", ImageFormat.Jpeg);
-                else if (corners == 4)
-                    b2[i].Save($"Shapes2Final/Rectangle{rectangle++}.jpg", ImageFormat.Jpeg);
+                HashSet<double> slopes = Corners.CalculateUniqueSlopes(outline);
+                int numOfSlopes = slopes.Count;
+                Console.WriteLine($"Shape {i+1} has {numOfSlopes} unique slopes with {outline.Count} points.\n");
+                double aspectRatio = (double)myB.Width / myB.Height;
+                if (numOfSlopes == 3)
+                    b2[i].Save($"Shapes1Final/Triangle{triangle++}.jpg", ImageFormat.Jpeg);
+                else if (numOfSlopes == 2 && (aspectRatio >= 0.95 && aspectRatio <= 1.05))
+                    b2[i].Save($"Shapes1Final/Square{square++}.jpg", ImageFormat.Jpeg);
+                else if (numOfSlopes == 2)
+                    b2[i].Save($"Shapes1Final/Rectangle{rectangle++}.jpg", ImageFormat.Jpeg);
                 else
-                    b2[i].Save($"Shapes2Final/Circle{circle++}.jpg", ImageFormat.Jpeg);
+                    b2[i].Save($"Shapes1Final/Circle{circle++}.jpg", ImageFormat.Jpeg);
                 
-                myB.Save($"Shapes2Laplace/Shape{i+1}.jpg", ImageFormat.Jpeg);
+                myB.Save($"Shapes1Laplace/Shape{i+1}.jpg", ImageFormat.Jpeg);
             }
             
             sw.Stop();

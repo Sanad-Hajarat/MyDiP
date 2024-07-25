@@ -265,16 +265,49 @@ namespace SanadDiP
             return component;
         }
 
-        public static int Count(List<Point> contour, double thresholdAngle = 0.2)
+        public static HashSet<double> CalculateUniqueSlopes(List<Point> points)
+        {
+            HashSet<double> slopes = new HashSet<double>();
+
+            for (int i = 1; i < points.Count-2; i++)
+            {
+                Point p1 = points[i-1];
+                Point p2 = points[i];
+                Point p3 = points[(i + 1) % points.Count];
+                Point p4 = points[(i + 2) % points.Count];
+
+                double slope1 = CalculateSlope(p1, p2);
+                double slope2 = CalculateSlope(p2, p3);
+                double slope3 = CalculateSlope(p3, p4);
+
+                if ((slope1 == slope2 && slope1 == slope3) || (slope1 == slope3 && slope1 != slope2))
+                    slopes.Add(slope1);
+            }
+
+            return slopes;
+        }
+
+        private static double CalculateSlope(Point p1, Point p2) 
+        { 
+            double dx = p2.X - p1.X;
+            double dy = p2.Y - p1.Y;
+
+            if (dx == 0)
+                return double.PositiveInfinity;
+
+            return dy / dx;
+        }
+
+        public static int Count(List<Point> component, double thresholdAngle = 0.2)
         {
             int corners = 0;
-            int count = contour.Count;
+            int count = component.Count;
 
             for (int i = 0; i < count - 1; i++)
             {
-                Point prev = contour[(i - 1 + count) % count];
-                Point current = contour[i];
-                Point next = contour[(i + 1) % count];
+                Point prev = component[(i - 1 + count) % count];
+                Point current = component[i];
+                Point next = component[(i + 1) % count];
 
                 double angle = CalculateAngle(prev, current, next);
 
