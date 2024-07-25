@@ -297,50 +297,6 @@ namespace SanadDiP
 
             return dy / dx;
         }
-
-        public static int Count(List<Point> component, double thresholdAngle = 0.2)
-        {
-            int corners = 0;
-            int count = component.Count;
-
-            for (int i = 0; i < count - 1; i++)
-            {
-                Point prev = component[(i - 1 + count) % count];
-                Point current = component[i];
-                Point next = component[(i + 1) % count];
-
-                double angle = CalculateAngle(prev, current, next);
-
-                if (!(angle < thresholdAngle || angle > (Math.PI - thresholdAngle)))
-                {
-                    corners++;
-                    // Console.WriteLine($"Corner at: ({contour[i].X}, {contour[i].Y})");
-                }
-            }
-
-            return corners;
-        }
-
-        private static double CalculateAngle(Point A, Point B, Point C)
-        {
-            double BAx = A.X - B.X;
-            double BAy = A.Y - B.Y;
-
-            double BCx = C.X - B.X;
-            double BCy = C.Y - B.Y;
-
-            double dotProduct = BAx * BCx + BAy * BCy;
-            double magnitudeBA = Math.Sqrt(BAx * BAx + BAy * BAy);
-            double magnitudeBC = Math.Sqrt(BCx * BCx + BCy * BCy);
-
-            double cosTheta = dotProduct / (magnitudeBA * magnitudeBC);
-
-            // Clamp the cosine value to the [-1, 1] range to avoid precision errors
-            cosTheta = Math.Max(-1.0, Math.Min(1.0, cosTheta));
-
-            double angle = Math.Acos(cosTheta);
-
-            return angle;
-        }
+        
     }
 }
