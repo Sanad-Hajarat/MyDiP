@@ -3,6 +3,7 @@ using System.Diagnostics;
 using System.Drawing;
 using System.Drawing.Imaging;
 using System.Collections.Generic; 
+using System.IO;
 
 namespace SanadDiP
 {
@@ -135,6 +136,15 @@ namespace SanadDiP
             //// Tests
             
             // Best image is using Laplace.
+
+            string[] filepaths = new string[] { "/home/sanad/DIPME/MyDiP/ShapeDetection/Shapes1Final", "/home/sanad/DIPME/MyDiP/ShapeDetection/Shapes2Final", "/home/sanad/DIPME/MyDiP/ShapeDetection/Shapes3Final",
+                                                "/home/sanad/DIPME/MyDiP/ShapeDetection/Shapes1Laplace"," /home/sanad/DIPME/MyDiP/ShapeDetection/Shapes2Laplace", "/home/sanad/DIPME/MyDiP/ShapeDetection/Shapes3Laplace",
+                                                "/home/sanad/DIPME/MyDiP/ShapeDetection/Shapes1Detected", "/home/sanad/DIPME/MyDiP/ShapeDetection/Shapes2Detected", "/home/sanad/DIPME/MyDiP/ShapeDetection/Shapes3Detected"}; 
+
+            foreach (string filepath in filepaths)
+                if (Directory.Exists(filepath))
+                    foreach (string file in Directory.GetFiles(filepath))
+                        File.Delete(file);
 
             Bitmap b = new Bitmap(address + "/Milestone-examples/ShapeDetectionTest.png");
             

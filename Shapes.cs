@@ -99,7 +99,7 @@ namespace SanadDiP
                         {
                             // New shape created called component which comes in the form of a list of points.
                             List<Point> component = new List<Point>();
-                            TraceOutline(bmd, stride, x, y, visited, component, bW, bH);
+                            GetPixels(bmd, stride, x, y, visited, component, bW, bH);
 
                             // components.Count = total number of shapes
                             components.Add(component);
@@ -113,7 +113,7 @@ namespace SanadDiP
             return components;
         }   
 
-        private static void TraceOutline(BitmapData bmd, int stride, int x, int y, bool [,] visited, List<Point> component, int bW, int bH)
+        private static void GetPixels(BitmapData bmd, int stride, int x, int y, bool [,] visited, List<Point> component, int bW, int bH)
         {
             // All of the points being tracked that are directly neighbors.
             Stack<Point> stack = new Stack<Point>();
@@ -275,6 +275,8 @@ namespace SanadDiP
                 }
             }
 
+            GetPixels(bmd, stride, 0, 0, visited, component, bW, bH);
+
             newB.UnlockBits(bmd);
 
             return component;
@@ -288,7 +290,7 @@ namespace SanadDiP
             for (int i = 1; i < points.Count-3; i++)
             {
                 Point p1 = points[(i - 1) % points.Count];
-                Point p3 = points[(i + 1) % points.Count];
+                Point p3 = points[(i + 1)];
                 Point p5 = points[(i + 3) % points.Count];
 
                 double slope13 = CalculateSlope(p1, p3);
@@ -329,6 +331,8 @@ namespace SanadDiP
                 b2[i].Save($"ShapeDetection/Shapes{dir}Detected/Shape{i+1}.jpg", ImageFormat.Jpeg);
 
                 Bitmap myB = ImageAlteration.Invert(Laplace(b2[i]));
+                myB.Save($"ShapeDetection/Shapes{dir}Laplace/Shape{i+1}.jpg", ImageFormat.Jpeg);
+
                 List<Point> outline = DefineOneShape(myB);
 
                 int numOfSlopes = CalculateUniqueSlopes(outline);
