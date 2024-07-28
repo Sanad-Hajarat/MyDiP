@@ -10,9 +10,8 @@ namespace SanadDiP
     /// ProgressSoft Corporation
     /// </CREDITS>
     
-    public class Corners
+    public class Shapes
     {
-        // really useless currently
         public static Bitmap Laplace(Bitmap b) 
         {
             int [,] kernel = new int [,] { {0, 1, 0}, {1, -4, 1}, {0, 1, 0} };
@@ -314,7 +313,7 @@ namespace SanadDiP
             return dy / dx;
         }
 
-        public static void ClassifyShapes(Bitmap b, int dir)
+        public static void Classify(Bitmap b, int dir)
         {
             Bitmap newB = ImageAlteration.GrayScale(b);
             newB = Binarization.ApplyStaticThreshold(b, 127);

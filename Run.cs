@@ -160,7 +160,7 @@ namespace SanadDiP
             b.Save("ShapeDetection/Shapes3Binary.jpg", ImageFormat.Jpeg);
 
             sw.Restart();
-            Corners.ClassifyShapes(b, 3);
+            Shapes.Classify(b, 3);
             sw.Stop();
 
             Console.WriteLine($"\nTime taken for saving all shapes: {sw.ElapsedMilliseconds}ms\n");
