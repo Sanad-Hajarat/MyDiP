@@ -139,7 +139,7 @@ namespace SanadDiP
             Bitmap b = new Bitmap(address + "/Milestone-examples/ShapeDetectionTest.png");
             
             sw.Restart();
-            Corners.ClassifyShapes(b, 1);
+            Shapes.Classify(b, 1);
             sw.Stop();
 
             Console.WriteLine($"\nTime taken for saving all shapes: {sw.ElapsedMilliseconds}ms\n");
@@ -147,7 +147,7 @@ namespace SanadDiP
             b = new Bitmap(address + "/Milestone-examples/ShapeDetectionTest2.png");
 
             sw.Restart();
-            Corners.ClassifyShapes(b, 2);
+            Shapes.Classify(b, 2);
             sw.Stop();
 
             Console.WriteLine($"\nTime taken for saving all shapes: {sw.ElapsedMilliseconds}ms\n");
