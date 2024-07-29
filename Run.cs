@@ -139,7 +139,8 @@ namespace SanadDiP
 
             string[] filepaths = new string[] { "/home/sanad/DIPME/MyDiP/ShapeDetection/Shapes1Final", "/home/sanad/DIPME/MyDiP/ShapeDetection/Shapes2Final", "/home/sanad/DIPME/MyDiP/ShapeDetection/Shapes3Final",
                                                 "/home/sanad/DIPME/MyDiP/ShapeDetection/Shapes1Laplace"," /home/sanad/DIPME/MyDiP/ShapeDetection/Shapes2Laplace", "/home/sanad/DIPME/MyDiP/ShapeDetection/Shapes3Laplace",
-                                                "/home/sanad/DIPME/MyDiP/ShapeDetection/Shapes1Detected", "/home/sanad/DIPME/MyDiP/ShapeDetection/Shapes2Detected", "/home/sanad/DIPME/MyDiP/ShapeDetection/Shapes3Detected"}; 
+                                                "/home/sanad/DIPME/MyDiP/ShapeDetection/Shapes1Detected", "/home/sanad/DIPME/MyDiP/ShapeDetection/Shapes2Detected", "/home/sanad/DIPME/MyDiP/ShapeDetection/Shapes3Detected",
+                                                "/home/sanad/DIPME/MyDiP/ShapeDetection/Shapes4Final", "/home/sanad/DIPME/MyDiP/ShapeDetection/Shapes4Laplace", "/home/sanad/DIPME/MyDiP/ShapeDetection/Shapes4Detected"}; 
 
             foreach (string filepath in filepaths)
                 if (Directory.Exists(filepath))
@@ -171,6 +172,19 @@ namespace SanadDiP
 
             sw.Restart();
             Shapes.Classify(b, 3);
+            sw.Stop();
+
+            Console.WriteLine($"\nTime taken for saving all shapes: {sw.ElapsedMilliseconds}ms\n");
+
+            b = new Bitmap(address + "/Milestone-examples/MyShapes2.png");
+            b.Save("ShapeDetection/Shapes4.jpg", ImageFormat.Jpeg);
+            b = ImageAlteration.GrayScale(b);
+            b.Save("ShapeDetection/Shapes4Gray.jpg", ImageFormat.Jpeg);
+            b = Binarization.ApplyStaticThreshold(b, 250);
+            b.Save("ShapeDetection/Shapes4Binary.jpg", ImageFormat.Jpeg);
+
+            sw.Restart();
+            Shapes.Classify(b, 4);
             sw.Stop();
 
             Console.WriteLine($"\nTime taken for saving all shapes: {sw.ElapsedMilliseconds}ms\n");

@@ -227,55 +227,21 @@ namespace SanadDiP
             BitmapData bmd = newB.LockBits(new Rectangle(0, 0, bW, bH), ImageLockMode.ReadOnly, PixelFormat.Format8bppIndexed);
 
             int stride = bmd.Stride;
-            int offSet = stride - bW;
-
-            // traverses image to find directly bottom or above pixel instead of going diagonal first.
-            int [] yTraversal = new int[] {-1, 1, 0};
 
             unsafe
             {
                 byte* ptr = (byte*)bmd.Scan0.ToPointer();
 
-                Stack<Point> stack = new Stack<Point>();
-
                 for (int x = 0; x < bW; x++)
                 {
                     if (*(ptr+x) == 0)
                     {
-                        stack.Push(new Point(x, 0));
+                        GetPixels(bmd, stride, x, 0, visited, component, bW, bH);
                         break;
-                    }
-                }
-
-                while (stack.Count > 0)
-                {
-                    Point p = stack.Pop();
-                    int myX = p.X, myY = p.Y;
-                    if (visited[myX, myY])
-                        continue;
-
-                    visited[myX, myY] = true;
-                    component.Add(p);
-
-                    for (int dy = 0; dy <= 2; dy++)
-                    {
-                        for (int dx = -1; dx <= 1; dx++)
-                        {
-                            int newX = myX + dx;
-                            int newY = myY + yTraversal[dy];
-
-                            if (newX >= 0 && newX < bW && newY >= 0 && newY < bH)
-                            {
-                                byte* pixel = ptr + (newY * stride) + newX;
-                                if (*pixel == 0 && !visited[newX, newY])
-                                    stack.Push(new Point(newX, newY));
-                            }
-                        }
                     }
                 }
             }
 
-            GetPixels(bmd, stride, 0, 0, visited, component, bW, bH);
 
             newB.UnlockBits(bmd);
 
