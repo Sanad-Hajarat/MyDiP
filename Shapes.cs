@@ -253,18 +253,30 @@ namespace SanadDiP
             // HashSet to prevent duplicates
             HashSet<double> slopes = new HashSet<double>();
 
-            for (int i = 1; i < points.Count-3; i++)
+            // double tolerance = 1e-2;
+            int size = points.Count;
+            for (int i = 0; i < points.Count-3; i++)
             {
-                Point p1 = points[(i - 1) % points.Count];
-                Point p3 = points[(i + 1)];
-                Point p5 = points[(i + 3) % points.Count];
+                Point p1 = points[i];
+                Point p2 = points[i + 2];
+                Point p3 = points[(i + 4) % size];
 
-                double slope13 = CalculateSlope(p1, p3);
-                double slope35 = CalculateSlope(p3, p5);
+                double slope12 = CalculateSlope(p1, p2);
+                double slope23 = CalculateSlope(p2, p3);
 
                 // If slope between 5 points is similar it means it's an edge of a shape. (measuring edges not corners)
-                if (slope13 == slope35)
-                    slopes.Add(slope13);
+                if (slope12 == slope23)
+                    slopes.Add(slope12);
+
+                // Point p1 = points[i];
+                // Point p2 = points[(i + 1) % points.Count];
+                // Point p3 = points[(i + 2) % points.Count];
+
+                // double angle1 = CalculateAngle(p1, p2);
+                // double angle2 = CalculateAngle(p2, p3);
+
+                // if (Math.Abs(angle1 - angle2) <= tolerance || Math.Abs(Math.Abs(angle1 - angle2) - 180) <= tolerance)
+                //     slopes.Add(angle1);
             }
 
             return slopes.Count;
@@ -304,6 +316,7 @@ namespace SanadDiP
                 int numOfSlopes = CalculateUniqueSlopes(outline);
         
                 double aspectRatio = (double)myB.Width / myB.Height;
+
                 if (numOfSlopes == 3)
                     b2[i].Save($"ShapeDetection/Shapes{dir}Final/Triangle{triangle++}.jpg", ImageFormat.Jpeg);
                 else if (numOfSlopes == 2 && (aspectRatio >= 0.95 && aspectRatio <= 1.05))
@@ -313,6 +326,22 @@ namespace SanadDiP
                 else
                     b2[i].Save($"ShapeDetection/Shapes{dir}Final/Circle{circle++}.jpg", ImageFormat.Jpeg);
             }
+        }
+
+        private static double CalculateAngle(Point p1, Point p2)
+        {
+            double deltaY = p2.Y - p1.Y;
+            double deltaX = p2.X - p1.X;
+
+            double angle = Math.Atan2(deltaY, deltaX) * (180.0 / Math.PI);
+
+            // Normalize the angle to be within 0 to 180 degrees
+            if (angle < 0)
+            {
+                angle += 180;
+            }
+
+            return angle;
         }
 
     }
