@@ -215,7 +215,7 @@ namespace SanadDiP
             }
             return splitShapes;
         }
-    
+
         public static List<Point> DefineOneShape(Bitmap b)
         {
             // Draws the shape in one image disregarding near shapes.
@@ -268,15 +268,6 @@ namespace SanadDiP
                 if (slope12 == slope23)
                     slopes.Add(slope12);
 
-                // Point p1 = points[i];
-                // Point p2 = points[(i + 1) % points.Count];
-                // Point p3 = points[(i + 2) % points.Count];
-
-                // double angle1 = CalculateAngle(p1, p2);
-                // double angle2 = CalculateAngle(p2, p3);
-
-                // if (Math.Abs(angle1 - angle2) <= tolerance || Math.Abs(Math.Abs(angle1 - angle2) - 180) <= tolerance)
-                //     slopes.Add(angle1);
             }
 
             return slopes.Count;
@@ -291,6 +282,53 @@ namespace SanadDiP
                 return double.PositiveInfinity;
 
             return dy / dx;
+        }
+
+        private static Bitmap FillShape(Bitmap b)
+        {
+            Bitmap newB = (Bitmap)b.Clone();
+            int bW = newB.Width, bH = newB.Height;
+            BitmapData bmd = newB.LockBits(new Rectangle(0, 0, bW, bH), ImageLockMode.ReadWrite, PixelFormat.Format8bppIndexed);
+
+            int stride = bmd.Stride;
+
+            unsafe
+            {
+                byte* pixel = (byte*)bmd.Scan0.ToPointer();
+
+                for (int y = 1; y < bH; y++)
+                {
+                    byte* rowPixel = pixel + y*stride;
+                    int firstBlack = 0;
+                    int lastBlack = 0;
+
+                    for (int x = 0; x < bW; x++)
+                    {
+                        if (*(rowPixel + x) < 128)
+                        {
+                            firstBlack = x;
+                            break;
+                        }
+                    }
+
+                    for (int x = 0; x < bW; x++)
+                    {
+                        if (*(rowPixel + bW - 1 - x) < 128)
+                        {
+                            lastBlack = bW - 1 - x;
+                            break;
+                        }
+                    }
+
+                    rowPixel += firstBlack + 1;
+
+                    for (int x = firstBlack + 1; x < lastBlack; x++, rowPixel++) { *rowPixel = (byte)0; }
+                }
+            }
+        
+            newB.UnlockBits(bmd);
+
+            return newB;
         }
 
         public static void Classify(Bitmap b, int dir)
@@ -308,7 +346,9 @@ namespace SanadDiP
             {
                 b2[i].Save($"ShapeDetection/Shapes{dir}Detected/Shape{i+1}.jpg", ImageFormat.Jpeg);
 
-                Bitmap myB = ImageAlteration.Invert(Laplace(b2[i]));
+                Bitmap filled = FillShape(b2[i]);
+                filled.Save($"ShapeDetection/Shapes{dir}Filled/Shape{i+1}.jpg", ImageFormat.Jpeg);
+                Bitmap myB = ImageAlteration.Invert(Laplace(filled));
                 myB.Save($"ShapeDetection/Shapes{dir}Laplace/Shape{i+1}.jpg", ImageFormat.Jpeg);
 
                 List<Point> outline = DefineOneShape(myB);
@@ -326,22 +366,6 @@ namespace SanadDiP
                 else
                     b2[i].Save($"ShapeDetection/Shapes{dir}Final/Circle{circle++}.jpg", ImageFormat.Jpeg);
             }
-        }
-
-        private static double CalculateAngle(Point p1, Point p2)
-        {
-            double deltaY = p2.Y - p1.Y;
-            double deltaX = p2.X - p1.X;
-
-            double angle = Math.Atan2(deltaY, deltaX) * (180.0 / Math.PI);
-
-            // Normalize the angle to be within 0 to 180 degrees
-            if (angle < 0)
-            {
-                angle += 180;
-            }
-
-            return angle;
         }
 
     }

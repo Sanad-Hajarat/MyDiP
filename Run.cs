@@ -140,7 +140,8 @@ namespace SanadDiP
             string[] filepaths = new string[] { "/home/sanad/DIPME/MyDiP/ShapeDetection/Shapes1Final", "/home/sanad/DIPME/MyDiP/ShapeDetection/Shapes2Final", "/home/sanad/DIPME/MyDiP/ShapeDetection/Shapes3Final",
                                                 "/home/sanad/DIPME/MyDiP/ShapeDetection/Shapes1Laplace"," /home/sanad/DIPME/MyDiP/ShapeDetection/Shapes2Laplace", "/home/sanad/DIPME/MyDiP/ShapeDetection/Shapes3Laplace",
                                                 "/home/sanad/DIPME/MyDiP/ShapeDetection/Shapes1Detected", "/home/sanad/DIPME/MyDiP/ShapeDetection/Shapes2Detected", "/home/sanad/DIPME/MyDiP/ShapeDetection/Shapes3Detected",
-                                                "/home/sanad/DIPME/MyDiP/ShapeDetection/Shapes4Final", "/home/sanad/DIPME/MyDiP/ShapeDetection/Shapes4Laplace", "/home/sanad/DIPME/MyDiP/ShapeDetection/Shapes4Detected"}; 
+                                                "/home/sanad/DIPME/MyDiP/ShapeDetection/Shapes4Final", "/home/sanad/DIPME/MyDiP/ShapeDetection/Shapes4Laplace", "/home/sanad/DIPME/MyDiP/ShapeDetection/Shapes4Detected",
+                                                "/home/sanad/DIPME/MyDiP/ShapeDetection/Shapes1Filled", "/home/sanad/DIPME/MyDiP/ShapeDetection/Shapes2Filled", "/home/sanad/DIPME/MyDiP/ShapeDetection/Shapes3Filled", "/home/sanad/DIPME/MyDiP/ShapeDetection/Shapes4Filled"}; 
 
             foreach (string filepath in filepaths)
                 if (Directory.Exists(filepath))
