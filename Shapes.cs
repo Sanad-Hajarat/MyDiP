@@ -119,6 +119,8 @@ namespace SanadDiP
             Stack<Point> stack = new Stack<Point>();
             stack.Push(new Point(x, y));
 
+            int [] yTraversal = new int[] {-1, 1, 0};
+
             unsafe
             {
                 byte* ptr = (byte*)bmd.Scan0.ToPointer();
@@ -135,12 +137,12 @@ namespace SanadDiP
                     component.Add(p);
 
                     // goes through 8-neighbors to find whole shape
-                    for (int dy = -1; dy <= 1; dy++)
+                    for (int dy = 0; dy <= 2; dy++)
                     {
                         for (int dx = -1; dx <= 1; dx++)
                         {
                             int newX = myX + dx;
-                            int newY = myY + dy;
+                            int newY = myY + yTraversal[dy];
 
                             if (newX >= 0 && newX < bW && newY >= 0 && newY < bH)
                             {
@@ -248,23 +250,25 @@ namespace SanadDiP
             return component;
         }
 
-        public static int CalculateUniqueSlopes(List<Point> points)
+        public static int CalculateUniqueSlopes(List<Point> points, Bitmap b)
         {
             // HashSet to prevent duplicates
             HashSet<double> slopes = new HashSet<double>();
 
-            // double tolerance = 1e-2;
+            double width = b.Width, height = b.Height;
+
+            int step = (int) Math.Max(Math.Floor(width/height), Math.Floor(height/width)) * 2;
             int size = points.Count;
-            for (int i = 0; i < points.Count-3; i++)
+
+            for (int i = 0; i < size - step - 1; i++)
             {
                 Point p1 = points[i];
-                Point p2 = points[i + 2];
-                Point p3 = points[(i + 4) % size];
+                Point p2 = points[i + step];
+                Point p3 = points[(i + step*2) % size];
 
                 double slope12 = CalculateSlope(p1, p2);
                 double slope23 = CalculateSlope(p2, p3);
 
-                // If slope between 5 points is similar it means it's an edge of a shape. (measuring edges not corners)
                 if (slope12 == slope23)
                     slopes.Add(slope12);
 
@@ -353,7 +357,7 @@ namespace SanadDiP
 
                 List<Point> outline = DefineOneShape(myB);
 
-                int numOfSlopes = CalculateUniqueSlopes(outline);
+                int numOfSlopes = CalculateUniqueSlopes(outline, b2[i]);
         
                 double aspectRatio = (double)myB.Width / myB.Height;
 
