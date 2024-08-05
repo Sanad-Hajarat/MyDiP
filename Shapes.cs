@@ -257,7 +257,7 @@ namespace SanadDiP
 
             double width = b.Width, height = b.Height;
 
-            int step = (int) Math.Max(Math.Floor(width/height), Math.Floor(height/width)) * 2;
+            int step = (int) Math.Max(Math.Ceiling(width/height), Math.Ceiling(height/width)) * 2;
             int size = points.Count;
 
             for (int i = 0; i < size - step - 1; i++)
@@ -345,7 +345,7 @@ namespace SanadDiP
 
             Console.WriteLine($"Shapes Detected = {listInList.Count}");
 
-            int circle = 1, triangle = 1, square = 1, rectangle = 1;
+            int circle = 1, triangle = 1, square = 1, rectangle = 1, ellipse = 1;
             for (int i = 0; i < b2.Length; i++)
             {
                 b2[i].Save($"ShapeDetection/Shapes{dir}Detected/Shape{i+1}.jpg", ImageFormat.Jpeg);
@@ -367,8 +367,10 @@ namespace SanadDiP
                     b2[i].Save($"ShapeDetection/Shapes{dir}Final/Square{square++}.jpg", ImageFormat.Jpeg);
                 else if (numOfSlopes == 2)
                     b2[i].Save($"ShapeDetection/Shapes{dir}Final/Rectangle{rectangle++}.jpg", ImageFormat.Jpeg);
-                else
+                else if (aspectRatio >= 0.95 && aspectRatio <= 1.05)
                     b2[i].Save($"ShapeDetection/Shapes{dir}Final/Circle{circle++}.jpg", ImageFormat.Jpeg);
+                else
+                    b2[i].Save($"ShapeDetection/Shapes{dir}Final/Ellipse{ellipse++}.jpg", ImageFormat.Jpeg);
             }
         }
 
