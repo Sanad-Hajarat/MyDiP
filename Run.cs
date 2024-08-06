@@ -141,9 +141,7 @@ namespace SanadDiP
                                                 "/home/sanad/DIPME/MyDiP/ShapeDetection/Shapes1Laplace"," /home/sanad/DIPME/MyDiP/ShapeDetection/Shapes2Laplace", "/home/sanad/DIPME/MyDiP/ShapeDetection/Shapes3Laplace",
                                                 "/home/sanad/DIPME/MyDiP/ShapeDetection/Shapes1Detected", "/home/sanad/DIPME/MyDiP/ShapeDetection/Shapes2Detected", "/home/sanad/DIPME/MyDiP/ShapeDetection/Shapes3Detected",
                                                 "/home/sanad/DIPME/MyDiP/ShapeDetection/Shapes4Final", "/home/sanad/DIPME/MyDiP/ShapeDetection/Shapes4Laplace", "/home/sanad/DIPME/MyDiP/ShapeDetection/Shapes4Detected",
-                                                "/home/sanad/DIPME/MyDiP/ShapeDetection/Shapes1Filled", "/home/sanad/DIPME/MyDiP/ShapeDetection/Shapes2Filled", "/home/sanad/DIPME/MyDiP/ShapeDetection/Shapes3Filled", "/home/sanad/DIPME/MyDiP/ShapeDetection/Shapes4Filled",
-                                                "/home/sanad/DIPME/MyDiP/ShapeDetection/Shapes5Final", "/home/sanad/DIPME/MyDiP/ShapeDetection/Shapes5Laplace", "/home/sanad/DIPME/MyDiP/ShapeDetection/Shapes5Detected", "/home/sanad/DIPME/MyDiP/ShapeDetection/Shapes5Filled"}; 
-
+                                                "/home/sanad/DIPME/MyDiP/ShapeDetection/Shapes1Filled", "/home/sanad/DIPME/MyDiP/ShapeDetection/Shapes2Filled", "/home/sanad/DIPME/MyDiP/ShapeDetection/Shapes3Filled", "/home/sanad/DIPME/MyDiP/ShapeDetection/Shapes4Filled"};
             foreach (string filepath in filepaths)
                 if (Directory.Exists(filepath))
                     foreach (string file in Directory.GetFiles(filepath))
@@ -187,19 +185,6 @@ namespace SanadDiP
 
             sw.Restart();
             Shapes.Classify(b, 4);
-            sw.Stop();
-
-            Console.WriteLine($"\nTime taken for saving all shapes: {sw.ElapsedMilliseconds}ms\n");
-
-            b = new Bitmap(address + "/Milestone-examples/LastTest.png");
-            b.Save("ShapeDetection/Shapes5.jpg", ImageFormat.Jpeg);
-            b = ImageAlteration.GrayScale(b);
-            b.Save("ShapeDetection/Shapes5Gray.jpg", ImageFormat.Jpeg);
-            b = Binarization.ApplyStaticThreshold(b, 250);
-            b.Save("ShapeDetection/Shapes5Binary.jpg", ImageFormat.Jpeg);
-
-            sw.Restart();
-            Shapes.Classify(b, 5);
             sw.Stop();
 
             Console.WriteLine($"\nTime taken for saving all shapes: {sw.ElapsedMilliseconds}ms\n");
