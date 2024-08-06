@@ -257,7 +257,7 @@ namespace SanadDiP
 
             double width = b.Width, height = b.Height;
 
-            int step = (int) Math.Max(Math.Ceiling(width/height), Math.Ceiling(height/width)) * 2;
+            int step = (int) Math.Max(Math.Round(width/height), Math.Round(height/width)) * 2;
             int size = points.Count;
 
             for (int i = 0; i < size - step - 1; i++)
